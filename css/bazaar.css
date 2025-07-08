@@ -1,0 +1,259 @@
+/* Styles spécifiques pour la page Bazaar */
+
+/* Contrôles de filtrage */
+.controls {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+}
+
+.control-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    align-items: center;
+}
+
+.control-group label {
+    font-weight: bold;
+    color: #555;
+}
+
+.control-group input {
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1em;
+    transition: border-color 0.3s ease;
+}
+
+.control-group input:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+/* Container principal du Bazaar */
+.bazaar-container {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 25px;
+    border-radius: 15px;
+    margin-bottom: 30px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #eee;
+}
+
+.section-header h2 {
+    color: #333;
+    font-size: 1.8em;
+    margin: 0;
+}
+
+.refresh-indicator {
+    font-size: 1.5em;
+    color: #667eea;
+    animation: spin 2s linear infinite;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.refresh-indicator.active {
+    opacity: 1;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Items du Bazaar */
+.bazaar-grid {
+    display: grid;
+    gap: 15px;
+}
+
+.bazaar-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    border-left: 4px solid #667eea;
+    transition: all 0.3s ease;
+}
+
+.bazaar-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.item-info {
+    flex: 1;
+}
+
+.item-name {
+    font-weight: bold;
+    color: #333;
+    font-size: 1.1em;
+    margin-bottom: 5px;
+}
+
+.item-volume {
+    font-size: 0.9em;
+    color: #666;
+}
+
+.item-prices {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.buy-price, .sell-price {
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.9em;
+    font-weight: bold;
+    min-width: 80px;
+    text-align: center;
+}
+
+.buy-price {
+    background: #d4edda;
+    color: #155724;
+}
+
+.sell-price {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.profit-indicator {
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 1em;
+    min-width: 70px;
+    text-align: center;
+}
+
+.profit-low {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.profit-medium {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+.profit-high {
+    background: #d4edda;
+    color: #155724;
+}
+
+.profit-excellent {
+    background: linear-gradient(45deg, #28a745, #20c997);
+    color: white;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* Section historique */
+.history-container {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+}
+
+.history-container h2 {
+    color: #333;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #eee;
+}
+
+.history-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 15px;
+}
+
+.history-item {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 10px;
+    border-left: 4px solid #6c757d;
+}
+
+.history-timestamp {
+    font-size: 0.8em;
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.history-details {
+    font-weight: bold;
+    color: #333;
+}
+
+/* Messages d'état */
+.error {
+    background: #f8d7da;
+    color: #721c24;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+    border: 1px solid #f5c6cb;
+    text-align: center;
+}
+
+.no-data {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    padding: 40px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    margin: 20px 0;
+}
+
+/* Responsive pour Bazaar */
+@media (max-width: 768px) {
+    .bazaar-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .item-prices {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .control-group {
+        grid-template-columns: 1fr;
+    }
+
+    .section-header {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+}

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hypixel Skyblock - Guide des gains d'argent</title>
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+    <div class="header">
+        <h1>🏆 Hypixel Skyblock Money Guide</h1>
+        <p>Guide complet des méthodes de gains d'argent avec données en temps réel</p>
+    </div>
+
+    <nav class="navigation">
+        <div class="nav-container">
+            <a href="index.html" class="nav-link active">🏆 MMM Guide</a>
+            <a href="pages/bazaar.html" class="nav-link">📊 Bazaar Flips</a>
+            <a href="pages/calculator.html" class="nav-link">🧮 Calculatrice</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="stats-bar">
+            <div class="stat-card">
+                <div class="stat-value" id="totalMethods">-</div>
+                <div class="stat-label">Méthodes référencées</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="bestProfit">-</div>
+                <div class="stat-label">Meilleur profit/h</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="lastUpdate">-</div>
+                <div class="stat-label">Dernière MAJ</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="apiStatus">-</div>
+                <div class="stat-label">Statut API</div>
+            </div>
+        </div>
+
+        <div class="filters">
+            <div class="filter-group">
+                <label for="categoryFilter">Catégorie:</label>
+                <select id="categoryFilter">
+                    <option value="all">Toutes</option>
+                    <option value="trading">Trading</option>
+                    <option value="farming">Farming</option>
+                    <option value="mining">Mining</option>
+                    <option value="combat">Combat</option>
+                    <option value="fishing">Fishing</option>
+                    <option value="misc">Divers</option>
+                </select>
+
+                <label for="difficultyFilter">Difficulté:</label>
+                <select id="difficultyFilter">
+                    <option value="all">Toutes</option>
+                    <option value="1">Débutant (1⭐)</option>
+                    <option value="2">Facile (2⭐)</option>
+                    <option value="3">Moyen (3⭐)</option>
+                    <option value="4">Difficile (4⭐)</option>
+                    <option value="5">Expert (5⭐)</option>
+                </select>
+
+                <label for="minProfit">Profit min/h:</label>
+                <input type="number" id="minProfit" placeholder="1000000" min="0">
+
+                <button class="update-btn" onclick="refreshPrices()">🔄 Actualiser prix</button>
+            </div>
+        </div>
+        <div id="methodsContainer" class="methods-grid">
+            <div class="loading">Chargement des méthodes de gains...</div>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

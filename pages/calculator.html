@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hypixel Skyblock - Calculatrice de Rendement</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/calculator.css">
+</head>
+<body>
+    <div class="header">
+        <h1>🧮 Calculatrice de Rendement Personnalisé</h1>
+        <p>Calculez vos profits avec votre propre équipement et setup</p>
+    </div>
+
+    <nav class="navigation">
+        <div class="nav-container">
+            <a href="../index.html" class="nav-link">🏆 MMM Guide</a>
+            <a href="bazaar.html" class="nav-link">📊 Bazaar Flips</a>
+            <a href="calculator.html" class="nav-link active">🧮 Calculatrice</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="stats-bar">
+            <div class="stat-card">
+                <div class="stat-value" id="hourlyProfit">-</div>
+                <div class="stat-label">Profit/heure calculé</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="hourlyItems">-</div>
+                <div class="stat-label">Items/heure</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="currentPrice">-</div>
+                <div class="stat-label">Prix actuel bazaar</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="lastUpdate">-</div>
+                <div class="stat-label">Dernière MAJ prix</div>
+            </div>
+        </div>
+
+        <div class="calculator-container">
+            <div class="calculator-section">
+                <h2>📊 Saisie de vos données</h2>
+                
+                <div class="input-group">
+                    <label for="itemSelect">Item farmé :</label>
+                    <select id="itemSelect">
+                        <option value="">-- Sélectionnez un item --</option>
+                        <optgroup label="Minerais enchantés">
+                            <option value="ENCHANTED_QUARTZ">Enchanted Quartz</option>
+                            <option value="ENCHANTED_REDSTONE">Enchanted Redstone</option>
+                            <option value="ENCHANTED_IRON">Enchanted Iron</option>
+                            <option value="ENCHANTED_GOLD">Enchanted Gold</option>
+                            <option value="ENCHANTED_DIAMOND">Enchanted Diamond</option>
+                            <option value="ENCHANTED_EMERALD">Enchanted Emerald</option>
+                            <option value="ENCHANTED_LAPIS_LAZULI">Enchanted Lapis Lazuli</option>
+                            <option value="ENCHANTED_COAL">Enchanted Coal</option>
+                            <option value="ENCHANTED_COBBLESTONE">Enchanted Cobblestone</option>
+                            <option value="ENCHANTED_OBSIDIAN">Enchanted Obsidian</option>
+                            <option value="ENCHANTED_SAND">Enchanted Sand</option>
+                            <option value="ENCHANTED_MYCELIUM">Enchanted Mycelium</option>
+                            <option value="ENCHANTED_FLINT">Enchanted Flint</option>
+                        </optgroup>
+                        <optgroup label="Métaux dwarven">
+                            <option value="ENCHANTED_MITHRIL">Enchanted Mithril</option>
+                            <option value="ENCHANTED_TITANIUM">Enchanted Titanium</option>
+                            <option value="ENCHANTED_TUNGSTEN">Enchanted Tungsten</option>
+                            <option value="ENCHANTED_UMBER">Enchanted Umber</option>
+                        </optgroup>
+                        <optgroup label="Gemstones">
+                            <option value="FINE_JADE_GEMSTONE">Fine Jade Gemstone</option>
+                            <option value="FINE_RUBY_GEMSTONE">Fine Ruby Gemstone</option>
+                            <option value="FINE_TOPAZ_GEMSTONE">Fine Topaz Gemstone</option>
+                            <option value="FINE_AMBER_GEMSTONE">Fine Amber Gemstone</option>
+                            <option value="FINE_SAPPHIRE_GEMSTONE">Fine Sapphire Gemstone</option>
+                            <option value="FINE_AMETHYST_GEMSTONE">Fine Amethyst Gemstone</option>
+                            <option value="FINE_JASPER_GEMSTONE">Fine Jasper Gemstone</option>
+                            <option value="FINE_OPAL_GEMSTONE">Fine Opal Gemstone</option>
+                        </optgroup>
+                        <optgroup label="Farming">
+                            <option value="ENCHANTED_CARROT">Enchanted Carrot</option>
+                            <option value="ENCHANTED_POTATO">Enchanted Potato</option>
+                            <option value="ENCHANTED_WHEAT">Enchanted Wheat</option>
+                            <option value="ENCHANTED_SUGAR_CANE">Enchanted Sugar Cane</option>
+                            <option value="ENCHANTED_MELON">Enchanted Melon</option>
+                            <option value="ENCHANTED_PUMPKIN">Enchanted Pumpkin</option>
+                            <option value="ENCHANTED_COCOA">Enchanted Cocoa Beans</option>
+                            <option value="ENCHANTED_CACTUS">Enchanted Cactus</option>
+                        </optgroup>
+                        <optgroup label="Combat/Autres">
+                            <option value="ENCHANTED_ROTTEN_FLESH">Enchanted Rotten Flesh</option>
+                            <option value="ENCHANTED_BONE">Enchanted Bone</option>
+                            <option value="ENCHANTED_STRING">Enchanted String</option>
+                            <option value="ENCHANTED_SPIDER_EYE">Enchanted Spider Eye</option>
+                            <option value="ENCHANTED_GUNPOWDER">Enchanted Gunpowder</option>
+                            <option value="ENCHANTED_ENDER_PEARL">Enchanted Ender Pearl</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="itemsCollected">Nombre d'items récoltés :</label>
+                    <input type="number" id="itemsCollected" placeholder="Ex: 125" min="1">
+                    <small>Nombre total d'items que vous avez récoltés pendant votre test</small>
+                </div>
+
+                <div class="input-group">
+                    <label for="testDuration">Durée du test :</label>
+                    <div class="duration-inputs">
+                        <input type="number" id="testMinutes" placeholder="5" min="0" max="59">
+                        <span>minutes</span>
+                        <input type="number" id="testSeconds" placeholder="30" min="0" max="59">
+                        <span>secondes</span>
+                    </div>
+                    <small>Durée pendant laquelle vous avez testé votre farm</small>
+                </div>
+
+                <button class="calculate-btn" onclick="calculateProfit()">🧮 Calculer le rendement</button>
+            </div>
+
+            <div class="results-section" id="resultsSection" style="display: none;">
+                <h2>📈 Résultats de votre setup</h2>
+                
+                <div class="result-card profit-card">
+                    <div class="result-title">💰 Profit par heure</div>
+                    <div class="result-value" id="resultProfitHour">-</div>
+                    <div class="result-subtitle" id="resultProfitDetails">-</div>
+                </div>
+
+                <div class="result-card production-card">
+                    <div class="result-title">⚡ Production par heure</div>
+                    <div class="result-value" id="resultProductionHour">-</div>
+                    <div class="result-subtitle">items/heure avec votre setup</div>
+                </div>
+
+                <div class="result-card efficiency-card">
+                    <div class="result-title">📊 Efficacité</div>
+                    <div class="result-value" id="resultEfficiency">-</div>
+                    <div class="result-subtitle" id="resultEfficiencyDetails">-</div>
+                </div>
+
+                <div class="result-card comparison-card">
+                    <div class="result-title">⚖️ Comparaison</div>
+                    <div class="result-value" id="resultComparison">-</div>
+                    <div class="result-subtitle" id="resultComparisonDetails">-</div>
+                </div>
+            </div>
+
+            <div class="history-section">
+                <h2>📝 Historique de vos calculs</h2>
+                <div id="calculationHistory" class="history-grid">
+                    <div class="no-history">Aucun calcul effectué pour le moment</div>
+                </div>
+                <button class="clear-history-btn" onclick="clearHistory()" style="display: none;">🗑️ Vider l'historique</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/calculator.js"></script>
+</body>
+</html>

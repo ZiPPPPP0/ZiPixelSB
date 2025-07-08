@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hypixel Skyblock - Bazaar Flips</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/bazaar.css">
+</head>
+<body>
+    <div class="header">
+        <h1>📊 Bazaar Flips en Temps Réel</h1>
+        <p>Trouvez les meilleures opportunités de trading au Bazaar</p>
+    </div>
+
+    <nav class="navigation">
+        <div class="nav-container">
+            <a href="../index.html" class="nav-link">🏆 MMM Guide</a>
+            <a href="bazaar.html" class="nav-link active">📊 Bazaar Flips</a>
+            <a href="calculator.html" class="nav-link">🧮 Calculatrice</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="stats-bar">
+            <div class="stat-card">
+                <div class="stat-value" id="totalItems">-</div>
+                <div class="stat-label">Items suivis</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="bestFlip">-</div>
+                <div class="stat-label">Meilleur flip %</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalProfit">-</div>
+                <div class="stat-label">Profit total disponible</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="lastUpdate">-</div>
+                <div class="stat-label">Dernière MAJ</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label for="minProfitPercent">Profit minimum (%):</label>
+                <input type="number" id="minProfitPercent" placeholder="2" min="0" step="0.1">
+
+                <label for="minVolume">Volume minimum:</label>
+                <input type="number" id="minVolume" placeholder="10000" min="0">
+
+                <label for="maxCapital">Capital max:</label>
+                <input type="number" id="maxCapital" placeholder="100000000" min="0">
+
+                <button class="update-btn" onclick="loadBazaarData()">🔄 Actualiser</button>
+            </div>
+        </div>
+
+        <div id="bazaarSection" class="bazaar-container">
+            <div class="section-header">
+                <h2>🔥 Top Opportunités Bazaar</h2>
+                <div class="refresh-indicator" id="refreshIndicator">🔄</div>
+            </div>
+            <div id="bazaarData" class="loading">Chargement des données du Bazaar...</div>
+        </div>
+
+        <div id="historySection" class="history-container">
+            <h2>📈 Historique des Flips</h2>
+            <div id="historyData" class="history-grid">
+                <div class="loading">Aucun historique pour le moment...</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/bazaar.js"></script>
+</body>
+</html>

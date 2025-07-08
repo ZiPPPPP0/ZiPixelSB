@@ -1,0 +1,309 @@
+/* Styles spécifiques pour la calculatrice */
+
+.calculator-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.calculator-section {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 30px;
+    border-radius: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+}
+
+.calculator-section h2 {
+    color: #333;
+    margin-bottom: 25px;
+    font-size: 1.5em;
+    border-bottom: 2px solid #667eea;
+    padding-bottom: 10px;
+}
+
+/* Groupes d'input */
+.input-group {
+    margin-bottom: 25px;
+}
+
+.input-group label {
+    display: block;
+    font-weight: bold;
+    color: #555;
+    margin-bottom: 8px;
+    font-size: 1.1em;
+}
+
+.input-group select,
+.input-group input[type="number"] {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1em;
+    background: white;
+    transition: border-color 0.3s ease;
+}
+
+.input-group select:focus,
+.input-group input[type="number"]:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.input-group small {
+    display: block;
+    color: #666;
+    font-size: 0.85em;
+    margin-top: 5px;
+    font-style: italic;
+}
+
+/* Inputs de durée */
+.duration-inputs {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.duration-inputs input {
+    width: 80px;
+    margin: 0;
+}
+
+.duration-inputs span {
+    color: #666;
+    font-weight: 500;
+}
+
+/* Bouton de calcul */
+.calculate-btn {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 25px;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.calculate-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+.calculate-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Section des résultats */
+.results-section {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 30px;
+    border-radius: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    border-left: 5px solid #28a745;
+}
+
+.results-section h2 {
+    color: #333;
+    margin-bottom: 25px;
+    font-size: 1.5em;
+}
+
+/* Cartes de résultats */
+.result-card {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    border-left: 4px solid #667eea;
+    transition: transform 0.3s ease;
+}
+
+.result-card:hover {
+    transform: translateX(5px);
+}
+
+.profit-card {
+    border-left-color: #28a745;
+    background: linear-gradient(135deg, #d4edda 0%, #f8f9fa 100%);
+}
+
+.production-card {
+    border-left-color: #007bff;
+    background: linear-gradient(135deg, #d1ecf1 0%, #f8f9fa 100%);
+}
+
+.efficiency-card {
+    border-left-color: #ffc107;
+    background: linear-gradient(135deg, #fff3cd 0%, #f8f9fa 100%);
+}
+
+.comparison-card {
+    border-left-color: #6f42c1;
+    background: linear-gradient(135deg, #e2d9f3 0%, #f8f9fa 100%);
+}
+
+.result-title {
+    font-size: 0.9em;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.result-value {
+    font-size: 2em;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.result-subtitle {
+    font-size: 0.85em;
+    color: #666;
+}
+
+/* Section historique */
+.history-section {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+}
+
+.history-section h2 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 1.5em;
+    border-bottom: 2px solid #667eea;
+    padding-bottom: 10px;
+}
+
+.history-grid {
+    display: grid;
+    gap: 15px;
+}
+
+.history-item {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 10px;
+    border-left: 4px solid #667eea;
+    transition: all 0.3s ease;
+}
+
+.history-item:hover {
+    transform: translateX(3px);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+.history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.history-item-name {
+    font-weight: bold;
+    color: #333;
+    font-size: 1.1em;
+}
+
+.history-timestamp {
+    font-size: 0.8em;
+    color: #666;
+}
+
+.history-details {
+    color: #555;
+    line-height: 1.4;
+}
+
+.history-profit {
+    font-weight: bold;
+    color: #28a745;
+}
+
+.no-history {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    padding: 40px;
+}
+
+.clear-history-btn {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 0.9em;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: all 0.3s ease;
+}
+
+.clear-history-btn:hover {
+    background: #c82333;
+    transform: translateY(-1px);
+}
+
+/* Messages d'état */
+.loading-message {
+    text-align: center;
+    color: #667eea;
+    font-style: italic;
+    padding: 20px;
+}
+
+.error-message {
+    background: #f8d7da;
+    color: #721c24;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #f5c6cb;
+    margin: 10px 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .calculator-section,
+    .results-section,
+    .history-section {
+        padding: 20px;
+        margin-bottom: 15px;
+    }
+    
+    .duration-inputs {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .duration-inputs input {
+        width: 100%;
+    }
+    
+    .result-value {
+        font-size: 1.5em;
+    }
+    
+    .history-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+}
