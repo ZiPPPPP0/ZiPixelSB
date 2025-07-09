@@ -400,17 +400,17 @@ const moneyMethods = [
         title: 'Glowstone Mining',
         category: 'mining',
         difficulty: 3,
-        baseProfit: 23000000,
+        baseProfit: 8400000,
         production: {
-            item: 'ENCHANTED_GLOWSTONE',
+            item: 'ENCHANTED_GLOWSTONE_DUST',
             amount: 35000,
-            npcPrice: 560,
-            lastBazaarPrice: 657
+            npcPrice: 160,
+            lastBazaarPrice: 240
         },
-        profitRange: '19.6M - 23M',
-        description: 'Mine de la glowstone dans le Nether.',
+        profitRange: '5.6M - 8.4M',
+        description: 'Mine de la glowstone dans le Nether pour produire de la glowstone dust enchantée.',
         requirements: ['Full Glossy Mineral Armor', 'Fleet Drill', 'Blue Cheese Drill'],
-        tips: 'Disponible au Volcano dans Crimson Isle'
+        tips: 'Disponible au Volcano dans Crimson Isle. Prix beaucoup plus bas que la glowstone normale'
     }
 ];
 
