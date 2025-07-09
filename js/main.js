@@ -17,7 +17,7 @@ const moneyMethods = [
         },
         profitRange: '18.3M - 59.6M',
         description: 'Mine du quartz pour produire 28,635 enchanted quartz par heure. Méthode très rentable avec un bon profit bazaar.',
-        requirements: ['Picoche efficace', 'Accès aux mines de quartz', 'Mining Fortune recommandée'],
+        requirements: ['Full Divan Armor', 'Blue Cheese Drill', 'Mining Fortune optimisée'],
         tips: 'Le prix bazaar varie beaucoup, surveillez les fluctuations pour maximiser les profits'
     },
     {
@@ -34,7 +34,7 @@ const moneyMethods = [
         },
         profitRange: '6.87M - 51.5M',
         description: 'Mine de la redstone pour produire 42,966 enchanted redstone par heure. Bon volume de production.',
-        requirements: ['Picoche adaptée', 'Accès aux mines de redstone', 'Fortune Mining'],
+        requirements: ['Full Divan Armor', 'Blue Cheese Drill', 'Fortune Mining'],
         tips: 'Grande différence entre vente NPC et bazaar, privilégiez le bazaar'
     },
     {
@@ -51,7 +51,7 @@ const moneyMethods = [
         },
         profitRange: '10.2M - 44.3M',
         description: 'Mine du fer pour produire 32,091 enchanted iron par heure. Méthode stable et accessible.',
-        requirements: ['Picoche de fer+', 'Mining Fortune', 'Accès aux mines de fer'],
+        requirements: ['Full Glossy Mineral Armor', 'Blue Cheese Drill', 'Mining Fortune'],
         tips: 'Bon compromis entre accessibilité et rentabilité'
     },
     {
@@ -68,7 +68,7 @@ const moneyMethods = [
         },
         profitRange: '6.1M - 49.8M (avec Haste Rings)',
         description: 'Mine de la cobblestone avec 1,649 Mining Fortune et 310 Block Fortune. Produit 38,280 enchanted cobblestone/h et 300k XP/h.',
-        requirements: ['1,649 Mining Fortune', '310 Block Fortune', 'Haste Rings (pour prix max)'],
+        requirements: ['Full Glossy Mineral Armor', 'Scatha Pet', 'Blue Cheese Drill', 'Haste Rings (pour prix max)'],
         tips: 'Avec Haste Rings: 1,300 coins/item vs 440 sans. Investissement rentable!'
     },
     {
@@ -85,7 +85,7 @@ const moneyMethods = [
         },
         profitRange: '5.93M - 32.9M',
         description: 'Mine du tungsten avec 2,159 Mining Fortune et 125 Dwarven Metal Fortune. Produit 2,435 enchanted tungsten/h et 1.68M XP/h.',
-        requirements: ['2,159 Mining Fortune', '125 Dwarven Metal Fortune', 'Accès Dwarven Mines', 'Setup très avancé'],
+        requirements: ['Full Divan Armor', 'Blue Cheese Drill', 'Setup très avancé'],
         tips: 'Énorme différence entre bazaar et NPC. Nécessite un setup dwarven optimal'
     },
     {
@@ -102,7 +102,7 @@ const moneyMethods = [
         },
         profitRange: '1.62M - 1.86M',
         description: 'Mine de l\'umber avec 2,159 Mining Fortune et 125 Dwarven Metal Fortune. Produit 1,275 enchanted umber/h et complément au tungsten.',
-        requirements: ['2,159 Mining Fortune', '125 Dwarven Metal Fortune', 'Accès Dwarven Mines', 'Setup très avancé'],
+        requirements: ['Full Divan Armor', 'Blue Cheese Drill', 'Setup très avancé'],
         tips: 'Souvent miné en complément du tungsten. Prix plus stable que le tungsten'
     },
     {
@@ -119,7 +119,7 @@ const moneyMethods = [
         },
         profitRange: '30.1M - 46.7M',
         description: 'Mine de l\'ambre avec 2,169 Mining Fortune et 190 Gemstone Fortune. Produit 1,610 fine amber/h ou 20.1 flawless/h et 920k XP/h.',
-        requirements: ['2,169 Mining Fortune', '190 Gemstone Fortune', 'Accès Crystal Hollows', 'Setup gemstone expert'],
+        requirements: ['Full Divan Armor', 'Blue Cheese Drill', 'Setup gemstone expert'],
         tips: 'Prix très volatils. Les flawless amber sont plus rares mais beaucoup plus chers'
     },
     {
@@ -136,7 +136,7 @@ const moneyMethods = [
         },
         profitRange: '40.6M - 42.5M',
         description: 'Mine de l\'or avec 1,699 Mining Fortune et 110 Ore Fortune. Produit 84,579 enchanted gold/h et 5.15M XP/h.',
-        requirements: ['1,699 Mining Fortune', '110 Ore Fortune', 'Équipement optimisé'],
+        requirements: ['Full Glossy Mineral Armor', 'Divan Armor (Swap)', 'Blue Cheese Drill'],
         tips: 'Excellent pour l\'XP mining en plus du profit. Prix relativement stables'
     },
     {
@@ -153,7 +153,7 @@ const moneyMethods = [
         },
         profitRange: '40.7M - 43M',
         description: 'Mine des diamants pour produire 31,812 enchanted diamonds par heure et 1.56M XP/h.',
-        requirements: ['Mining Fortune élevée', 'Picoche diamant+', 'Accès deep caverns'],
+        requirements: ['Full Glossy Mineral Armor', 'Blue Cheese Drill', 'Accès deep caverns'],
         tips: 'Très stable, prix peu volatils. Bon pour l\'XP mining'
     },
     {
@@ -170,7 +170,7 @@ const moneyMethods = [
         },
         profitRange: '4.27M - 42.1M',
         description: 'Mine du flint avec 1,044 Mining Fortune et 310 Block Fortune. Produit 6,674 enchanted flint/h et 112k XP/h.',
-        requirements: ['1,044 Mining Fortune', '310 Block Fortune', 'Setup spécialisé'],
+        requirements: ['Full Glossy Mineral Armor', 'Flint Shovel', 'Blue Cheese Drill'],
         tips: 'Prix très élevé par item mais production plus faible. Très sensible aux fluctuations bazaar'
     },
     {
@@ -187,7 +187,7 @@ const moneyMethods = [
         },
         profitRange: '25.2M - 41M',
         description: 'Mine du mycelium/red sand avec 1,019 Mining Fortune et 310 Block Fortune. Produit 31,560 enchanted mycelium/h et 1.4M XP/h.',
-        requirements: ['1,019 Mining Fortune', '310 Block Fortune', 'Accès aux zones spécifiques'],
+        requirements: ['Full Glossy Mineral Armor', 'Blue Cheese Drill', 'Black Cat Pet'],
         tips: 'Bon équilibre entre profit et XP. Zones parfois difficiles d\'accès'
     },
     {
@@ -204,7 +204,7 @@ const moneyMethods = [
         },
         profitRange: '35M - 40.3M',
         description: 'Mine des rubis avec 2,169 Mining Fortune et 190 Gemstone Fortune. Produit 1,335 fine ruby/h + 490 fine topaz/h et 1.06M XP/h.',
-        requirements: ['2,169 Mining Fortune', '190 Gemstone Fortune', 'Accès Crystal Hollows', 'Setup gemstone avancé'],
+        requirements: ['Full Divan Armor', 'Heated Reforge', 'Bell Pet', 'Blue Cheese Drill'],
         tips: 'Bazaar uniquement, prix très volatils. Topaz en bonus appréciable'
     },
     {
@@ -221,7 +221,7 @@ const moneyMethods = [
         },
         profitRange: '25.2M - 38M',
         description: 'Mine des émeraudes pour produire 36,216 enchanted emerald par heure et 1.85M XP/h.',
-        requirements: ['Fortune Mining', 'Picoche efficace', 'Accès aux mines d\'émeraude'],
+        requirements: ['Full Glossy Mineral Armor', 'Blue Cheese Drill', 'Fortune Mining'],
         tips: 'Bon ratio XP/profit. Production élevée compensant le prix moyen'
     },
     {
@@ -238,7 +238,7 @@ const moneyMethods = [
         },
         profitRange: '21.68M - 38M',
         description: 'Mine du mithril avec 2,209 Mining Fortune et 125 Dwarven Metal Fortune. Produit 13,564 enchanted mithril + 1,352 enchanted titanium/h et 2.7M XP/h.',
-        requirements: ['2,209 Mining Fortune', '125 Dwarven Metal Fortune', 'Accès Dwarven Mines', 'Équipement dwarven'],
+        requirements: ['Full Divan Armor', 'Blue Cheese Drill', 'Équipement dwarven'],
         tips: 'Produit aussi du titanium en bonus. Bon équilibre profit/XP dans les Dwarven Mines'
     },
     {
@@ -255,7 +255,7 @@ const moneyMethods = [
         },
         profitRange: '25.6M - 33.4M',
         description: 'Mine de la jade avec 2,209 Mining Fortune et 315 Gemstone Fortune + 30 Fortune from belt. Produit 1,336 fine jade gemstone/h et 942k XP/h.',
-        requirements: ['2,209 Mining Fortune', '315 Gemstone Fortune', 'Belt avec +30 Fortune', 'Accès Crystal Hollows'],
+        requirements: ['Full Divan Armor', 'Blue Cheese Drill', 'Belt avec +30 Fortune'],
         tips: 'Prix bazaar TRÈS volatils. Vérifiez toujours avant de farmer!'
     },
     {
@@ -272,7 +272,7 @@ const moneyMethods = [
         },
         profitRange: '5.5M - 32.6M',
         description: 'Mine du lapis pour produire 34,375 enchanted lapis par heure et 955k XP/h.',
-        requirements: ['Mining setup basique', 'Accès aux mines de lapis'],
+        requirements: ['Full Glossy Mineral Armor', 'Blue Cheese Drill', 'Mining setup basique'],
         tips: 'Méthode accessible pour débutants. Grande différence NPC/bazaar'
     },
     {
@@ -289,7 +289,7 @@ const moneyMethods = [
         },
         profitRange: '21.4M - 32M',
         description: 'Mine de l\'obsidienne avec 1,578 Mining Fortune et 385 Block Fortune. Produit 14,865 enchanted obsidian/h et 3.75M XP/h.',
-        requirements: ['1,578 Mining Fortune', '385 Block Fortune', 'Accès aux zones d\'obsidienne'],
+        requirements: ['Full Glossy Mineral Armor', 'Dragonfade Cloak', 'Fleet Drill', 'Blue Cheese Drill'],
         tips: 'Excellent pour l\'XP (3.75M/h). Production plus faible mais XP très élevée'
     },
     {
@@ -306,8 +306,111 @@ const moneyMethods = [
         },
         profitRange: '11.7M - 21.9M',
         description: 'Mine du sable avec 919 Mining Fortune et 310 Block Fortune. Produit 36,492 enchanted sand/h et 1.32M XP/h.',
-        requirements: ['919 Mining Fortune', '310 Block Fortune', 'Accès aux zones de sable'],
+        requirements: ['Full Glossy Mineral Armor', 'Scatha Pet', 'Promising Shovel', 'Blue Cheese Drill', 'Black Cat Pet'],
         tips: 'Méthode stable et accessible. Bon pour commencer le mining fortune'
+    },
+    // Méthodes supplémentaires basées sur le CSV
+    {
+        id: 'mining_coal',
+        title: 'Coal Mining (Crystal Hollows)',
+        category: 'mining',
+        difficulty: 4,
+        baseProfit: 25000000,
+        production: {
+            item: 'ENCHANTED_COAL',
+            amount: 35000,
+            npcPrice: 480,
+            lastBazaarPrice: 714
+        },
+        profitRange: '16.8M - 25M',
+        description: 'Mine du charbon dans les Crystal Hollows avec setup dwarven optimisé.',
+        requirements: ['3/4 Divan Armor', '1 Mineral Armor', 'Divan Drill', 'Blue Cheese Drill'],
+        tips: 'Excellent dans les Crystal Hollows, fortune dwarven requise'
+    },
+    {
+        id: 'mining_glacite',
+        title: 'Glacite Mining',
+        category: 'mining',
+        difficulty: 4,
+        baseProfit: 28000000,
+        production: {
+            item: 'GLACITE',
+            amount: 45000,
+            npcPrice: 480,
+            lastBazaarPrice: 622
+        },
+        profitRange: '21.6M - 28M',
+        description: 'Mine de la glacite avec setup dwarven complet.',
+        requirements: ['Full Divan Armor', 'Blue Cheese Drill', 'Setup dwarven complet'],
+        tips: 'Nécessite accès aux zones glacite et setup dwarven optimal'
+    },
+    {
+        id: 'mining_ice',
+        title: 'Ice Mining',
+        category: 'mining',
+        difficulty: 3,
+        baseProfit: 22000000,
+        production: {
+            item: 'ENCHANTED_ICE',
+            amount: 40000,
+            npcPrice: 480,
+            lastBazaarPrice: 550
+        },
+        profitRange: '19.2M - 22M',
+        description: 'Mine de la glace avec pickaxe spécialisée.',
+        requirements: ['Full Glossy Mineral Armor', 'Pioneer Pickaxe (Fleet)', 'Blue Cheese Drill'],
+        tips: 'Disponible à Jerry Island, nécessite Pioneer Pickaxe avec reforge Fleet'
+    },
+    {
+        id: 'mining_hardstone',
+        title: 'Hardstone Mining',
+        category: 'mining',
+        difficulty: 3,
+        baseProfit: 24000000,
+        production: {
+            item: 'HARDSTONE',
+            amount: 50000,
+            npcPrice: 400,
+            lastBazaarPrice: 480
+        },
+        profitRange: '20M - 24M',
+        description: 'Mine de la hardstone avec pet Armadillo pour bonus.',
+        requirements: ['Full Glossy Mineral Armor', 'Armadillo Pet', 'Fleet Drill', 'Blue Cheese Drill'],
+        tips: 'Le pet Armadillo donne un bonus significatif pour la hardstone'
+    },
+    {
+        id: 'mining_endstone',
+        title: 'Endstone Mining',
+        category: 'mining',
+        difficulty: 3,
+        baseProfit: 26000000,
+        production: {
+            item: 'ENCHANTED_ENDSTONE',
+            amount: 38000,
+            npcPrice: 560,
+            lastBazaarPrice: 684
+        },
+        profitRange: '21.3M - 26M',
+        description: 'Mine de l\'endstone dans l\'End.',
+        requirements: ['Full Glossy Mineral Armor', 'Fleet Drill', 'Blue Cheese Drill'],
+        tips: 'Disponible dans Dragon\'s Nest, nécessite accès à l\'End'
+    },
+    {
+        id: 'mining_glowstone',
+        title: 'Glowstone Mining',
+        category: 'mining',
+        difficulty: 3,
+        baseProfit: 23000000,
+        production: {
+            item: 'ENCHANTED_GLOWSTONE',
+            amount: 35000,
+            npcPrice: 560,
+            lastBazaarPrice: 657
+        },
+        profitRange: '19.6M - 23M',
+        description: 'Mine de la glowstone dans le Nether.',
+        requirements: ['Full Glossy Mineral Armor', 'Fleet Drill', 'Blue Cheese Drill'],
+        tips: 'Disponible au Volcano dans Crimson Isle'
     }
 ];
 
@@ -451,7 +554,13 @@ async function fetchBazaarPrices() {
             'FINE_JADE_GEMSTONE': 25000,
             'ENCHANTED_LAPIS_LAZULI': 950,
             'ENCHANTED_OBSIDIAN': 2150,
-            'ENCHANTED_SAND': 600
+            'ENCHANTED_SAND': 600,
+            'ENCHANTED_COAL': 714,
+            'GLACITE': 622,
+            'ENCHANTED_ICE': 550,
+            'HARDSTONE': 480,
+            'ENCHANTED_ENDSTONE': 684,
+            'ENCHANTED_GLOWSTONE': 657
         };
     }
 }
