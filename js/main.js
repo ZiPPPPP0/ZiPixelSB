@@ -338,6 +338,24 @@ function calculateCurrentProfit(method) {
     }
 }
 
+// Fonction pour calculer le profit NPC
+function calculateNpcProfit(method) {
+    if (!method.production) return 0;
+    
+    // Gestion des méthodes avec plusieurs items
+    if (method.production.items) {
+        let totalProfit = 0;
+        method.production.items.forEach(item => {
+            totalProfit += item.amount * item.npcPrice;
+        });
+        return totalProfit;
+    } else {
+        // Méthodes avec un seul item
+        const prod = method.production;
+        return prod.amount * prod.npcPrice;
+    }
+}
+
 // Fonction pour obtenir la production par heure formatée
 function getProductionInfo(method) {
     if (!method.production) return 'Production non spécifiée';
@@ -446,6 +464,7 @@ async function updatePricesAndProfits() {
         
         moneyMethods.forEach(method => {
             method.currentProfit = calculateCurrentProfit(method);
+            method.npcProfit = calculateNpcProfit(method);
         });
         
         console.log('Prix mis à jour, application des filtres...');
@@ -457,6 +476,7 @@ async function updatePricesAndProfits() {
         // En cas d'erreur, utiliser les profits de base
         moneyMethods.forEach(method => {
             method.currentProfit = method.baseProfit;
+            method.npcProfit = calculateNpcProfit(method);
         });
         
         applyFilters();
@@ -468,14 +488,15 @@ function initializeFilters() {
     try {
         const categoryFilter = document.getElementById('categoryFilter');
         const difficultyFilter = document.getElementById('difficultyFilter');
+        const sortFilter = document.getElementById('sortFilter');
         const minProfitFilter = document.getElementById('minProfit');
 
-        if (!categoryFilter || !difficultyFilter || !minProfitFilter) {
+        if (!categoryFilter || !difficultyFilter || !sortFilter || !minProfitFilter) {
             console.error('Éléments de filtre non trouvés dans le DOM');
             return false;
         }
 
-        [categoryFilter, difficultyFilter, minProfitFilter].forEach(filter => {
+        [categoryFilter, difficultyFilter, sortFilter, minProfitFilter].forEach(filter => {
             filter.addEventListener('change', applyFilters);
         });
         
@@ -494,10 +515,12 @@ function applyFilters() {
         
         const categoryElement = document.getElementById('categoryFilter');
         const difficultyElement = document.getElementById('difficultyFilter');
+        const sortElement = document.getElementById('sortFilter');
         const minProfitElement = document.getElementById('minProfit');
         
         const category = categoryElement ? categoryElement.value : 'all';
         const difficulty = difficultyElement ? difficultyElement.value : 'all';
+        const sortBy = sortElement ? sortElement.value : 'bazaar';
         const minProfit = minProfitElement ? (parseInt(minProfitElement.value) || 0) : 0;
 
         filteredMethods = moneyMethods.filter(method => {
@@ -509,13 +532,21 @@ function applyFilters() {
             return categoryMatch && difficultyMatch && profitMatch;
         });
 
+        // Tri selon le critère sélectionné
         filteredMethods.sort((a, b) => {
-            const profitA = a.currentProfit || a.baseProfit;
-            const profitB = b.currentProfit || b.baseProfit;
-            return profitB - profitA;
+            if (sortBy === 'npc') {
+                const profitA = a.npcProfit || 0;
+                const profitB = b.npcProfit || 0;
+                return profitB - profitA;
+            } else {
+                // Tri par profit bazaar (défaut)
+                const profitA = a.currentProfit || a.baseProfit;
+                const profitB = b.currentProfit || b.baseProfit;
+                return profitB - profitA;
+            }
         });
 
-        console.log(`Filtres appliqués: ${filteredMethods.length} méthodes trouvées`);
+        console.log(`Filtres appliqués: ${filteredMethods.length} méthodes trouvées, triées par ${sortBy === 'npc' ? 'profit NPC' : 'profit Bazaar'}`);
         
         renderMethods();
         updateStats();
@@ -544,6 +575,7 @@ function renderMethods() {
 
         const html = filteredMethods.map(method => {
             const currentProfitValue = method.currentProfit || method.baseProfit;
+            const npcProfitValue = method.npcProfit || 0;
             
             return `
             <div class="method-card" data-category="${method.category}">
@@ -562,6 +594,9 @@ function renderMethods() {
                     <div class="profit-details">
                         ${getPriceInfo(method)}
                     </div>
+                    ${npcProfitValue > 0 ? `<div class="profit-details">
+                        <strong>Profit NPC:</strong> ${formatCoins(npcProfitValue)}/h
+                    </div>` : ''}
                 </div>
 
                 <div class="difficulty">
@@ -614,9 +649,17 @@ function updateStats() {
         }
         
         if (bestProfitElement) {
-            const bestProfitValue = filteredMethods.length > 0 
-                ? Math.max(...filteredMethods.map(m => m.currentProfit || m.baseProfit))
-                : 0;
+            const sortElement = document.getElementById('sortFilter');
+            const sortBy = sortElement ? sortElement.value : 'bazaar';
+            
+            let bestProfitValue = 0;
+            if (filteredMethods.length > 0) {
+                if (sortBy === 'npc') {
+                    bestProfitValue = Math.max(...filteredMethods.map(m => m.npcProfit || 0));
+                } else {
+                    bestProfitValue = Math.max(...filteredMethods.map(m => m.currentProfit || m.baseProfit));
+                }
+            }
             bestProfitElement.textContent = bestProfitValue > 0 ? formatCoins(bestProfitValue) : '-';
         }
         
