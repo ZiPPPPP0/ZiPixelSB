@@ -356,46 +356,47 @@ function calculateNpcProfit(method) {
     }
 }
 
+// Fonction pour obtenir les prix par item
+function getItemPrices(method) {
+    if (!method.production) return { npcPrice: 0, bazaarPrice: 0 };
+    
+    if (method.production.items) {
+        // Pour les méthodes multi-items, calculer un prix moyen pondéré
+        let totalAmount = 0;
+        let totalNpcValue = 0;
+        let totalBazaarValue = 0;
+        
+        method.production.items.forEach(item => {
+            totalAmount += item.amount;
+            totalNpcValue += item.amount * item.npcPrice;
+            const currentPrice = currentBazaarPrices[item.item] || item.lastBazaarPrice;
+            totalBazaarValue += item.amount * currentPrice;
+        });
+        
+        return {
+            npcPrice: totalNpcValue / totalAmount,
+            bazaarPrice: totalBazaarValue / totalAmount
+        };
+    } else {
+        const prod = method.production;
+        const currentPrice = currentBazaarPrices[prod.item] || prod.lastBazaarPrice;
+        return {
+            npcPrice: prod.npcPrice,
+            bazaarPrice: currentPrice
+        };
+    }
+}
+
 // Fonction pour obtenir la production par heure formatée
 function getProductionInfo(method) {
     if (!method.production) return 'Production non spécifiée';
     
     if (method.production.items) {
-        return method.production.items
-            .map(item => `${formatNumber(item.amount)} ${formatItemName(item.item)}/h`)
-            .join(' + ');
+        const totalAmount = method.production.items.reduce((sum, item) => sum + item.amount, 0);
+        return `${formatNumber(totalAmount)} items/h`;
     } else {
         const prod = method.production;
-        return `${formatNumber(prod.amount)} ${formatItemName(prod.item)}/h`;
-    }
-}
-
-// Fonction pour obtenir les prix actuels (NPC vs Bazaar)
-function getPriceInfo(method) {
-    if (!method.production) return 'Prix non spécifiés';
-    
-    if (method.production.items) {
-        // Pour méthodes multi-items, montrer le total
-        const npcTotal = method.production.items.reduce((sum, item) => sum + (item.amount * item.npcPrice), 0);
-        const bazaarTotal = calculateCurrentProfit(method);
-        
-        // Vérifier si on a des prix réels pour au moins un item
-        const hasRealPrices = method.production.items.some(item => 
-            currentBazaarPrices.hasOwnProperty(item.item)
-        );
-        const priceStatus = hasRealPrices ? '🟢' : '🟡';
-        
-        return `NPC: ${formatCoins(npcTotal)}/h | Bazaar: ${formatCoins(bazaarTotal)}/h ${priceStatus}`;
-    } else {
-        const prod = method.production;
-        const npcValue = prod.amount * prod.npcPrice;
-        const currentUnitPrice = currentBazaarPrices[prod.item] || prod.lastBazaarPrice;
-        const bazaarValue = prod.amount * currentUnitPrice;
-        
-        const isRealPrice = currentBazaarPrices.hasOwnProperty(prod.item);
-        const priceStatus = isRealPrice ? '🟢' : '🟡';
-        
-        return `NPC: ${formatCoins(npcValue)}/h | Bazaar: ${formatCoins(bazaarValue)}/h ${priceStatus}`;
+        return `${formatNumber(prod.amount)} items/h`;
     }
 }
 
@@ -487,16 +488,15 @@ async function updatePricesAndProfits() {
 function initializeFilters() {
     try {
         const categoryFilter = document.getElementById('categoryFilter');
-        const difficultyFilter = document.getElementById('difficultyFilter');
         const sortFilter = document.getElementById('sortFilter');
         const minProfitFilter = document.getElementById('minProfit');
 
-        if (!categoryFilter || !difficultyFilter || !sortFilter || !minProfitFilter) {
+        if (!categoryFilter || !sortFilter || !minProfitFilter) {
             console.error('Éléments de filtre non trouvés dans le DOM');
             return false;
         }
 
-        [categoryFilter, difficultyFilter, sortFilter, minProfitFilter].forEach(filter => {
+        [categoryFilter, sortFilter, minProfitFilter].forEach(filter => {
             filter.addEventListener('change', applyFilters);
         });
         
@@ -514,22 +514,19 @@ function applyFilters() {
         console.log('Application des filtres...');
         
         const categoryElement = document.getElementById('categoryFilter');
-        const difficultyElement = document.getElementById('difficultyFilter');
         const sortElement = document.getElementById('sortFilter');
         const minProfitElement = document.getElementById('minProfit');
         
         const category = categoryElement ? categoryElement.value : 'all';
-        const difficulty = difficultyElement ? difficultyElement.value : 'all';
         const sortBy = sortElement ? sortElement.value : 'bazaar';
         const minProfit = minProfitElement ? (parseInt(minProfitElement.value) || 0) : 0;
 
         filteredMethods = moneyMethods.filter(method => {
             const currentProfitValue = method.currentProfit || method.baseProfit;
             const categoryMatch = category === 'all' || method.category === category;
-            const difficultyMatch = difficulty === 'all' || method.difficulty.toString() === difficulty;
             const profitMatch = currentProfitValue >= minProfit;
             
-            return categoryMatch && difficultyMatch && profitMatch;
+            return categoryMatch && profitMatch;
         });
 
         // Tri selon le critère sélectionné
@@ -576,6 +573,15 @@ function renderMethods() {
         const html = filteredMethods.map(method => {
             const currentProfitValue = method.currentProfit || method.baseProfit;
             const npcProfitValue = method.npcProfit || 0;
+            const itemPrices = getItemPrices(method);
+            
+            // Vérifier si on a des prix réels
+            const hasRealPrices = method.production && (
+                method.production.items ? 
+                method.production.items.some(item => currentBazaarPrices.hasOwnProperty(item.item)) :
+                currentBazaarPrices.hasOwnProperty(method.production.item)
+            );
+            const priceStatus = hasRealPrices ? '🟢 Prix réels' : '🟡 Prix estimés';
             
             return `
             <div class="method-card" data-category="${method.category}">
@@ -589,20 +595,24 @@ function renderMethods() {
                 <div class="profit-info">
                     <div class="profit-main">${formatCoins(currentProfitValue)}/h</div>
                     <div class="profit-details">
-                        Production: ${getProductionInfo(method)}
+                        ${getProductionInfo(method)} • ${priceStatus}
                     </div>
-                    <div class="profit-details">
-                        ${getPriceInfo(method)}
-                    </div>
-                    ${npcProfitValue > 0 ? `<div class="profit-details">
-                        <strong>Profit NPC:</strong> ${formatCoins(npcProfitValue)}/h
-                    </div>` : ''}
                 </div>
 
-                <div class="difficulty">
-                    <span class="difficulty-label">Difficulté:</span>
-                    <div class="difficulty-stars">
-                        ${[1,2,3,4,5].map(i => `<span class="star ${i <= method.difficulty ? 'filled' : ''}">★</span>`).join('')}
+                <div class="price-comparison">
+                    <div class="price-row">
+                        <span class="price-label">💰 Prix par item:</span>
+                        <div class="price-values">
+                            <span class="npc-price">NPC: ${formatCoins(itemPrices.npcPrice)}</span>
+                            <span class="bazaar-price">Bazaar: ${formatCoins(itemPrices.bazaarPrice)}</span>
+                        </div>
+                    </div>
+                    <div class="price-row">
+                        <span class="price-label">📊 Profit total:</span>
+                        <div class="price-values">
+                            <span class="npc-profit">NPC: ${formatCoins(npcProfitValue)}/h</span>
+                            <span class="bazaar-profit">Bazaar: ${formatCoins(currentProfitValue)}/h</span>
+                        </div>
                     </div>
                 </div>
 
@@ -612,8 +622,6 @@ function renderMethods() {
                     <h4>Prérequis:</h4>
                     ${method.requirements.map(req => `<span class="req-item">${req}</span>`).join('')}
                 </div>
-
-                ${method.tips ? `<div class="description"><strong>💡 Conseil:</strong> ${method.tips}</div>` : ''}
             </div>
         `;
         }).join('');
