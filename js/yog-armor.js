@@ -108,6 +108,8 @@ async function loadMaterialPrices() {
             throw new Error('Réponse API bazaar invalide');
         }
         
+        console.log('Données bazaar reçues, extraction des prix...');
+        
         // Extraire les prix des matériaux nécessaires (ENCHANTED_HARD_STONE et YOGGIE)
         materialPrices = {};
         
