@@ -8,7 +8,7 @@ const yogArmorCrafts = [
         name: 'Yog Helmet',
         icon: '⛑️',
         materials: {
-            ENCHANTED_HARDSTONE: 100,
+            HARDSTONE: 100,  // Corrigé: utilise HARDSTONE au lieu de ENCHANTED_HARDSTONE
             YOGGIE: 40
         },
         auctionSearchTerms: ['yog helmet', 'yog_helmet', 'YOG_HELMET']
@@ -18,7 +18,7 @@ const yogArmorCrafts = [
         name: 'Yog Chestplate',
         icon: '🛡️',
         materials: {
-            ENCHANTED_HARDSTONE: 160,
+            HARDSTONE: 160,  // Corrigé
             YOGGIE: 40
         },
         auctionSearchTerms: ['yog chestplate', 'yog_chestplate', 'YOG_CHESTPLATE']
@@ -28,7 +28,7 @@ const yogArmorCrafts = [
         name: 'Yog Leggings',
         icon: '👖',
         materials: {
-            ENCHANTED_HARDSTONE: 140,
+            HARDSTONE: 140,  // Corrigé
             YOGGIE: 40
         },
         auctionSearchTerms: ['yog leggings', 'yog_leggings', 'YOG_LEGGINGS']
@@ -38,7 +38,7 @@ const yogArmorCrafts = [
         name: 'Yog Boots',
         icon: '🥾',
         materials: {
-            ENCHANTED_HARDSTONE: 80,
+            HARDSTONE: 80,   // Corrigé
             YOGGIE: 40
         },
         auctionSearchTerms: ['yog boots', 'yog_boots', 'YOG_BOOTS']
@@ -48,11 +48,13 @@ const yogArmorCrafts = [
 // Variables globales
 let materialPrices = {};
 let armorPrices = {};
+let profitHistory = [];
 
 // Initialisation
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Initialisation Yog Armor Calculator...');
     
+    loadProfitHistory();
     refreshAllData();
     
     // Auto-actualisation toutes les 5 minutes
@@ -80,6 +82,9 @@ async function refreshAllData() {
         console.log('Mise à jour de l\'affichage...');
         updateDisplay();
         
+        console.log('Sauvegarde dans l\'historique...');
+        saveProfitSnapshot();
+        
     } catch (error) {
         console.error('Erreur lors du chargement des données:', error);
         showError('Erreur lors du chargement des données: ' + error.message);
@@ -103,9 +108,20 @@ async function loadMaterialPrices() {
             throw new Error('Réponse API bazaar invalide');
         }
         
-        // Extraire les prix des matériaux nécessaires (ENCHANTED_HARDSTONE et YOGGIE)
+        // Extraire les prix des matériaux nécessaires (HARDSTONE et YOGGIE)
         materialPrices = {};
         
+        // Corrigé: utilise HARDSTONE au lieu de ENCHANTED_HARDSTONE
+        if (data.products.HARDSTONE && data.products.HARDSTONE.quick_status) {
+            materialPrices.HARDSTONE = {
+                buyPrice: data.products.HARDSTONE.quick_status.buyPrice || 0,
+                sellPrice: data.products.HARDSTONE.quick_status.sellPrice || 0,
+                buyVolume: data.products.HARDSTONE.quick_status.buyVolume || 0,
+                sellVolume: data.products.HARDSTONE.quick_status.sellVolume || 0
+            };
+        }
+        
+        // Vérifier aussi ENCHANTED_HARDSTONE au cas où
         if (data.products.ENCHANTED_HARDSTONE && data.products.ENCHANTED_HARDSTONE.quick_status) {
             materialPrices.ENCHANTED_HARDSTONE = {
                 buyPrice: data.products.ENCHANTED_HARDSTONE.quick_status.buyPrice || 0,
@@ -125,8 +141,8 @@ async function loadMaterialPrices() {
         }
         
         // Prix de fallback si pas de données API
-        if (!materialPrices.ENCHANTED_HARDSTONE) {
-            materialPrices.ENCHANTED_HARDSTONE = {
+        if (!materialPrices.HARDSTONE && !materialPrices.ENCHANTED_HARDSTONE) {
+            materialPrices.HARDSTONE = {
                 buyPrice: 480,
                 sellPrice: 500,
                 buyVolume: 50000,
@@ -150,7 +166,7 @@ async function loadMaterialPrices() {
         
         // Prix de fallback en cas d'erreur
         materialPrices = {
-            ENCHANTED_HARDSTONE: {
+            HARDSTONE: {
                 buyPrice: 480,
                 sellPrice: 500,
                 buyVolume: 50000,
@@ -313,7 +329,15 @@ async function loadAuctionPrices() {
 function calculateEstimatedCraftCost(craft) {
     let cost = 0;
     Object.entries(craft.materials).forEach(([material, quantity]) => {
-        const materialPrice = materialPrices[material];
+        // Corrigé: gère HARDSTONE et ENCHANTED_HARDSTONE
+        let materialPrice = materialPrices[material];
+        if (!materialPrice && material === 'HARDSTONE') {
+            materialPrice = materialPrices.ENCHANTED_HARDSTONE;
+        }
+        if (!materialPrice && material === 'ENCHANTED_HARDSTONE') {
+            materialPrice = materialPrices.HARDSTONE;
+        }
+        
         if (materialPrice) {
             cost += quantity * materialPrice.buyPrice;
         }
@@ -334,7 +358,15 @@ function calculateProfits() {
         // Calcul du coût de craft
         let craftCost = 0;
         Object.entries(craft.materials).forEach(([material, quantity]) => {
-            const materialPrice = materialPrices[material];
+            // Corrigé: gère HARDSTONE et ENCHANTED_HARDSTONE
+            let materialPrice = materialPrices[material];
+            if (!materialPrice && material === 'HARDSTONE') {
+                materialPrice = materialPrices.ENCHANTED_HARDSTONE;
+            }
+            if (!materialPrice && material === 'ENCHANTED_HARDSTONE') {
+                materialPrice = materialPrices.HARDSTONE;
+            }
+            
             if (materialPrice) {
                 craftCost += quantity * materialPrice.buyPrice;
             }
@@ -370,17 +402,21 @@ function updateDisplay() {
     updateMaterialPrices();
     updateArmorCards();
     updateStats();
+    updateHistoricalData();
 }
 
 // Mise à jour des prix des matériaux
 function updateMaterialPrices() {
-    // Enchanted Hardstone
+    // Hardstone (corrigé)
     const hardstonePrice = document.getElementById('hardstonePrice');
     const hardstoneStock = document.getElementById('hardstoneStock');
     
-    if (hardstonePrice && materialPrices.ENCHANTED_HARDSTONE) {
-        hardstonePrice.textContent = formatCoins(materialPrices.ENCHANTED_HARDSTONE.buyPrice);
-        hardstoneStock.textContent = `Stock: ${formatNumber(materialPrices.ENCHANTED_HARDSTONE.buyVolume)}`;
+    if (hardstonePrice) {
+        const hardstoneData = materialPrices.HARDSTONE || materialPrices.ENCHANTED_HARDSTONE;
+        if (hardstoneData) {
+            hardstonePrice.textContent = formatCoins(hardstoneData.buyPrice);
+            hardstoneStock.textContent = `Stock: ${formatNumber(hardstoneData.buyVolume)}`;
+        }
     }
     
     // Yoggie
@@ -466,7 +502,14 @@ function updateArmorCards() {
                 <div class="cost-breakdown">
                     <strong>Matériaux requis:</strong><br>
                     ${Object.entries(craft.materials).map(([material, qty]) => {
-                        const price = materialPrices[material] ? materialPrices[material].buyPrice : 0;
+                        let materialPrice = materialPrices[material];
+                        if (!materialPrice && material === 'HARDSTONE') {
+                            materialPrice = materialPrices.ENCHANTED_HARDSTONE;
+                        }
+                        if (!materialPrice && material === 'ENCHANTED_HARDSTONE') {
+                            materialPrice = materialPrices.HARDSTONE;
+                        }
+                        const price = materialPrice ? materialPrice.buyPrice : 0;
                         const cost = qty * price;
                         return `• ${qty}x ${formatMaterialName(material)} = ${formatCoins(cost)}`;
                     }).join('<br>')}
@@ -525,6 +568,103 @@ function updateStats() {
     }
 }
 
+// Sauvegarde d'un snapshot dans l'historique
+function saveProfitSnapshot() {
+    const snapshot = {
+        timestamp: new Date(),
+        totalProfit: yogArmorCrafts.reduce((sum, craft) => sum + (craft.analysis?.rawProfit || 0), 0),
+        pieces: yogArmorCrafts.map(craft => ({
+            name: craft.name,
+            profit: craft.analysis?.rawProfit || 0,
+            profitPercent: craft.analysis?.profitPercent || 0,
+            craftCost: craft.analysis?.craftCost || 0,
+            sellPrice: craft.analysis?.sellPrice || 0,
+            isRealData: craft.analysis?.isRealData || false
+        })),
+        materials: {
+            hardstone: (materialPrices.HARDSTONE || materialPrices.ENCHANTED_HARDSTONE)?.buyPrice || 0,
+            yoggie: materialPrices.YOGGIE?.buyPrice || 0
+        }
+    };
+    
+    profitHistory.unshift(snapshot);
+    
+    // Garder seulement les 20 derniers
+    if (profitHistory.length > 20) {
+        profitHistory = profitHistory.slice(0, 20);
+    }
+    
+    // Sauvegarder dans localStorage
+    try {
+        const historyToSave = profitHistory.map(item => ({
+            ...item,
+            timestamp: item.timestamp.toISOString()
+        }));
+        localStorage.setItem('yogArmorHistory', JSON.stringify(historyToSave));
+    } catch (error) {
+        console.warn('Impossible de sauvegarder l\'historique:', error);
+    }
+}
+
+// Chargement de l'historique
+function loadProfitHistory() {
+    try {
+        const saved = localStorage.getItem('yogArmorHistory');
+        if (saved) {
+            const parsedHistory = JSON.parse(saved);
+            profitHistory = parsedHistory.map(item => ({
+                ...item,
+                timestamp: new Date(item.timestamp)
+            }));
+        }
+    } catch (error) {
+        console.warn('Impossible de charger l\'historique:', error);
+        profitHistory = [];
+    }
+}
+
+// Mise à jour de l'historique affiché
+function updateHistoricalData() {
+    const container = document.getElementById('historicalData');
+    
+    if (!container) return;
+    
+    if (profitHistory.length === 0) {
+        container.innerHTML = '<div class="no-data">Aucun historique pour le moment...</div>';
+        return;
+    }
+    
+    const html = profitHistory.slice(0, 10).map(snapshot => `
+        <div class="historical-item">
+            <div class="historical-header">
+                <strong>Snapshot du ${snapshot.timestamp.toLocaleString('fr-FR')}</strong>
+                <span class="historical-timestamp">Profit total: ${formatCoins(snapshot.totalProfit)}</span>
+            </div>
+            <div class="historical-details">
+                ${snapshot.pieces.map(piece => `
+                    <div>${piece.name}: ${formatCoins(piece.profit)} (${piece.profitPercent >= 0 ? '+' : ''}${piece.profitPercent.toFixed(1)}%) ${piece.isRealData ? '🟢' : '🟡'}</div>
+                `).join('')}
+            </div>
+        </div>
+    `).join('');
+    
+    container.innerHTML = html;
+}
+
+// Vider l'historique
+function clearProfitHistory() {
+    if (confirm('❓ Êtes-vous sûr de vouloir vider l\'historique des profits ?')) {
+        profitHistory = [];
+        try {
+            localStorage.removeItem('yogArmorHistory');
+        } catch (error) {
+            console.warn('Impossible de vider l\'historique:', error);
+        }
+        updateHistoricalData();
+        console.log('Historique des profits vidé');
+    }
+}
+
 // Affichage d'erreur
 function showError(message) {
     const armorGrid = document.getElementById('armorGrid');
@@ -555,6 +695,7 @@ function formatNumber(num) {
 function formatMaterialName(material) {
     const names = {
         'ENCHANTED_HARDSTONE': 'Enchanted Hardstone',
+        'HARDSTONE': 'Hardstone',  // Ajouté
         'YOGGIE': 'Yoggie'
     };
     return names[material] || material;
