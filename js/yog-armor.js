@@ -8,40 +8,40 @@ const yogArmorCrafts = [
         name: 'Yog Helmet',
         icon: '⛑️',
         materials: {
-            HARDSTONE: 100,
+            ENCHANTED_HARDSTONE: 100,
             YOGGIE: 40
         },
-        auctionSearchTerms: ['yog helmet', 'yog_helmet']
+        auctionSearchTerms: ['yog helmet', 'yog_helmet', 'YOG_HELMET']
     },
     {
         id: 'yog_chestplate',
         name: 'Yog Chestplate',
         icon: '🛡️',
         materials: {
-            HARDSTONE: 160,
+            ENCHANTED_HARDSTONE: 160,
             YOGGIE: 40
         },
-        auctionSearchTerms: ['yog chestplate', 'yog_chestplate']
+        auctionSearchTerms: ['yog chestplate', 'yog_chestplate', 'YOG_CHESTPLATE']
     },
     {
         id: 'yog_leggings',
         name: 'Yog Leggings',
         icon: '👖',
         materials: {
-            HARDSTONE: 140,
+            ENCHANTED_HARDSTONE: 140,
             YOGGIE: 40
         },
-        auctionSearchTerms: ['yog leggings', 'yog_leggings']
+        auctionSearchTerms: ['yog leggings', 'yog_leggings', 'YOG_LEGGINGS']
     },
     {
         id: 'yog_boots',
         name: 'Yog Boots',
         icon: '🥾',
         materials: {
-            HARDSTONE: 80,
+            ENCHANTED_HARDSTONE: 80,
             YOGGIE: 40
         },
-        auctionSearchTerms: ['yog boots', 'yog_boots']
+        auctionSearchTerms: ['yog boots', 'yog_boots', 'YOG_BOOTS']
     }
 ];
 
@@ -108,15 +108,15 @@ async function loadMaterialPrices() {
             throw new Error('Réponse API bazaar invalide');
         }
         
-        // Extraire les prix des matériaux nécessaires
+        // Extraire les prix des matériaux nécessaires (ENCHANTED_HARDSTONE et YOGGIE)
         materialPrices = {};
         
-        if (data.products.HARDSTONE && data.products.HARDSTONE.quick_status) {
-            materialPrices.HARDSTONE = {
-                buyPrice: data.products.HARDSTONE.quick_status.buyPrice || 0,
-                sellPrice: data.products.HARDSTONE.quick_status.sellPrice || 0,
-                buyVolume: data.products.HARDSTONE.quick_status.buyVolume || 0,
-                sellVolume: data.products.HARDSTONE.quick_status.sellVolume || 0
+        if (data.products.ENCHANTED_HARDSTONE && data.products.ENCHANTED_HARDSTONE.quick_status) {
+            materialPrices.ENCHANTED_HARDSTONE = {
+                buyPrice: data.products.ENCHANTED_HARDSTONE.quick_status.buyPrice || 0,
+                sellPrice: data.products.ENCHANTED_HARDSTONE.quick_status.sellPrice || 0,
+                buyVolume: data.products.ENCHANTED_HARDSTONE.quick_status.buyVolume || 0,
+                sellVolume: data.products.ENCHANTED_HARDSTONE.quick_status.sellVolume || 0
             };
         }
         
@@ -130,8 +130,8 @@ async function loadMaterialPrices() {
         }
         
         // Prix de fallback si pas de données API
-        if (!materialPrices.HARDSTONE) {
-            materialPrices.HARDSTONE = {
+        if (!materialPrices.ENCHANTED_HARDSTONE) {
+            materialPrices.ENCHANTED_HARDSTONE = {
                 buyPrice: 480,
                 sellPrice: 500,
                 buyVolume: 50000,
@@ -155,7 +155,7 @@ async function loadMaterialPrices() {
         
         // Prix de fallback en cas d'erreur
         materialPrices = {
-            HARDSTONE: {
+            ENCHANTED_HARDSTONE: {
                 buyPrice: 480,
                 sellPrice: 500,
                 buyVolume: 50000,
@@ -171,65 +171,159 @@ async function loadMaterialPrices() {
     }
 }
 
-// Chargement des prix auction house (simulation car API auction complexe)
+// Chargement des prix auction house depuis l'API Hypixel
 async function loadAuctionPrices() {
     try {
-        // Pour cette démo, on simule les prix auction house
-        // En réalité, il faudrait parser l'API auction d'Hypixel
-        // qui retourne des millions d'enchères et nécessite un traitement complexe
+        console.log('Récupération des données auction house...');
         
-        console.log('Simulation des prix auction house...');
+        // Première requête pour obtenir le nombre total de pages
+        const firstResponse = await fetch(`${HYPIXEL_API_BASE}/skyblock/auctions?page=0`);
         
-        armorPrices = {
-            yog_helmet: {
-                averagePrice: 2500000,
-                lowestBin: 2200000,
-                highestBin: 2800000,
-                volume: 15,
-                lastUpdated: new Date()
-            },
-            yog_chestplate: {
-                averagePrice: 4200000,
-                lowestBin: 3800000,
-                highestBin: 4600000,
-                volume: 12,
-                lastUpdated: new Date()
-            },
-            yog_leggings: {
-                averagePrice: 3800000,
-                lowestBin: 3400000,
-                highestBin: 4200000,
-                volume: 18,
-                lastUpdated: new Date()
-            },
-            yog_boots: {
-                averagePrice: 2000000,
-                lowestBin: 1750000,
-                highestBin: 2300000,
-                volume: 22,
-                lastUpdated: new Date()
+        if (!firstResponse.ok) {
+            throw new Error(`Erreur HTTP: ${firstResponse.status}`);
+        }
+        
+        const firstData = await firstResponse.json();
+        
+        if (!firstData.success) {
+            throw new Error('Réponse API auction invalide');
+        }
+        
+        const totalPages = firstData.totalPages || 1;
+        console.log(`Total de ${totalPages} pages d'auctions à analyser`);
+        
+        // Collecter toutes les auctions Yog Armor
+        const yogAuctions = [];
+        
+        // Analyser les 10 premières pages pour éviter de surcharger
+        const pagesToCheck = Math.min(10, totalPages);
+        
+        for (let page = 0; page < pagesToCheck; page++) {
+            try {
+                const response = await fetch(`${HYPIXEL_API_BASE}/skyblock/auctions?page=${page}`);
+                
+                if (!response.ok) {
+                    console.warn(`Erreur page ${page}:`, response.status);
+                    continue;
+                }
+                
+                const data = await response.json();
+                
+                if (!data.success || !data.auctions) {
+                    console.warn(`Données invalides page ${page}`);
+                    continue;
+                }
+                
+                // Filtrer les auctions Yog Armor
+                const pageYogAuctions = data.auctions.filter(auction => {
+                    if (!auction.item_name || !auction.bin) return false;
+                    
+                    const itemName = auction.item_name.toLowerCase();
+                    return itemName.includes('yog') && 
+                           (itemName.includes('helmet') || 
+                            itemName.includes('chestplate') || 
+                            itemName.includes('leggings') || 
+                            itemName.includes('boots'));
+                });
+                
+                yogAuctions.push(...pageYogAuctions);
+                
+                // Délai pour éviter rate limiting
+                if (page < pagesToCheck - 1) {
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                }
+                
+            } catch (error) {
+                console.warn(`Erreur lors du chargement de la page ${page}:`, error);
             }
-        };
+        }
         
-        // Ajouter une variation réaliste basée sur le temps
-        const timeVariation = Math.sin(Date.now() / 100000) * 0.15;
+        console.log(`${yogAuctions.length} auctions Yog trouvées sur ${pagesToCheck} pages`);
         
-        Object.keys(armorPrices).forEach(armorId => {
-            const basePrice = armorPrices[armorId].averagePrice;
-            const variation = 1 + (Math.random() - 0.5) * 0.2 + timeVariation;
+        // Analyser les prix par pièce
+        armorPrices = {};
+        
+        yogArmorCrafts.forEach(craft => {
+            const craftAuctions = yogAuctions.filter(auction => {
+                const itemName = auction.item_name.toLowerCase();
+                return craft.auctionSearchTerms.some(term => 
+                    itemName.includes(term.toLowerCase())
+                );
+            });
             
-            armorPrices[armorId].averagePrice = Math.floor(basePrice * variation);
-            armorPrices[armorId].lowestBin = Math.floor(armorPrices[armorId].averagePrice * 0.85);
-            armorPrices[armorId].highestBin = Math.floor(armorPrices[armorId].averagePrice * 1.15);
-            armorPrices[armorId].volume = Math.floor(armorPrices[armorId].volume * (0.8 + Math.random() * 0.4));
+            if (craftAuctions.length > 0) {
+                const binPrices = craftAuctions
+                    .filter(auction => auction.bin && auction.starting_bid > 0)
+                    .map(auction => auction.starting_bid)
+                    .sort((a, b) => a - b);
+                
+                if (binPrices.length > 0) {
+                    armorPrices[craft.id] = {
+                        lowestBin: binPrices[0],
+                        averagePrice: binPrices[Math.floor(binPrices.length / 2)], // Médiane
+                        highestBin: binPrices[binPrices.length - 1],
+                        volume: binPrices.length,
+                        lastUpdated: new Date(),
+                        allPrices: binPrices.slice(0, 10) // Garder les 10 plus bas
+                    };
+                    
+                    console.log(`${craft.name}: ${binPrices.length} auctions, prix min: ${formatCoins(binPrices[0])}`);
+                }
+            }
         });
         
-        console.log('Prix auction simulés:', armorPrices);
+        // Prix de fallback pour les pièces sans données
+        yogArmorCrafts.forEach(craft => {
+            if (!armorPrices[craft.id]) {
+                console.warn(`Pas de données auction pour ${craft.name}, utilisation de prix estimés`);
+                
+                // Prix estimés basés sur les coûts de craft
+                const estimatedCraftCost = calculateEstimatedCraftCost(craft);
+                const estimatedSellPrice = estimatedCraftCost * 1.3; // 30% de marge estimée
+                
+                armorPrices[craft.id] = {
+                    lowestBin: Math.floor(estimatedSellPrice * 0.9),
+                    averagePrice: estimatedSellPrice,
+                    highestBin: Math.floor(estimatedSellPrice * 1.2),
+                    volume: 0,
+                    lastUpdated: new Date(),
+                    isEstimated: true
+                };
+            }
+        });
+        
+        console.log('Prix auction finaux:', armorPrices);
         
     } catch (error) {
         console.error('Erreur lors du chargement des prix auction:', error);
-        throw error;
+        
+        // Prix de fallback complets en cas d'erreur
+        yogArmorCrafts.forEach(craft => {
+            const estimatedCraftCost = calculateEstimatedCraftCost(craft);
+            const estimatedSellPrice = estimatedCraftCost * 1.2;
+            
+            armorPrices[craft.id] = {
+                lowestBin: Math.floor(estimatedSellPrice * 0.85),
+                averagePrice: estimatedSellPrice,
+                highestBin: Math.floor(estimatedSellPrice * 1.15),
+                volume: 0,
+                lastUpdated: new Date(),
+                isEstimated: true
+            };
+        });
     }
+}
+
+// Calcul du coût de craft estimé
+function calculateEstimatedCraftCost(craft) {
+    let cost = 0;
+    Object.entries(craft.materials).forEach(([material, quantity]) => {
+        const materialPrice = materialPrices[material];
+        if (materialPrice) {
+            cost += quantity * materialPrice.buyPrice;
+        }
+    });
+    return cost;
 }
 
 // Calcul des profits pour chaque pièce
@@ -251,20 +345,25 @@ function calculateProfits() {
             }
         });
         
+        // Utiliser le prix le plus bas (lowestBin) pour être réaliste
+        const sellPrice = armorPrice.lowestBin;
+        
         // Calcul des profits (en soustrayant les frais d'auction house ~2%)
-        const auctionFees = armorPrice.averagePrice * 0.02;
-        const netSellPrice = armorPrice.averagePrice - auctionFees;
+        const auctionFees = sellPrice * 0.02;
+        const netSellPrice = sellPrice - auctionFees;
         
         craft.analysis = {
             craftCost: craftCost,
-            sellPrice: armorPrice.averagePrice,
+            sellPrice: sellPrice,
             netSellPrice: netSellPrice,
             auctionFees: auctionFees,
             rawProfit: netSellPrice - craftCost,
             profitPercent: ((netSellPrice - craftCost) / craftCost) * 100,
             volume: armorPrice.volume,
             lowestBin: armorPrice.lowestBin,
-            highestBin: armorPrice.highestBin
+            averagePrice: armorPrice.averagePrice,
+            highestBin: armorPrice.highestBin,
+            isRealData: !armorPrice.isEstimated
         };
         
         console.log(`${craft.name}: ${formatCoins(craft.analysis.rawProfit)} profit (${craft.analysis.profitPercent.toFixed(1)}%)`);
@@ -281,13 +380,13 @@ function updateDisplay() {
 
 // Mise à jour des prix des matériaux
 function updateMaterialPrices() {
-    // Hardstone
+    // Enchanted Hardstone
     const hardstonePrice = document.getElementById('hardstonePrice');
     const hardstoneStock = document.getElementById('hardstoneStock');
     
-    if (hardstonePrice && materialPrices.HARDSTONE) {
-        hardstonePrice.textContent = formatCoins(materialPrices.HARDSTONE.buyPrice);
-        hardstoneStock.textContent = `Stock: ${formatNumber(materialPrices.HARDSTONE.buyVolume)}`;
+    if (hardstonePrice && materialPrices.ENCHANTED_HARDSTONE) {
+        hardstonePrice.textContent = formatCoins(materialPrices.ENCHANTED_HARDSTONE.buyPrice);
+        hardstoneStock.textContent = `Stock: ${formatNumber(materialPrices.ENCHANTED_HARDSTONE.buyVolume)}`;
     }
     
     // Yoggie
@@ -333,6 +432,8 @@ function updateArmorCards() {
         else if (isProfit) profitClass += ' profit-positive';
         else profitClass += ' profit-negative';
         
+        const dataStatus = analysis.isRealData ? '🟢 Prix réels' : '🟡 Prix estimés';
+        
         return `
             <div class="${cardClass}">
                 <div class="armor-header">
@@ -347,7 +448,7 @@ function updateArmorCards() {
                 
                 <div class="price-breakdown">
                     <div class="price-row">
-                        <span class="price-label">Prix vente moyen:</span>
+                        <span class="price-label">Prix vente (lowest BIN):</span>
                         <span class="price-value">${formatCoins(analysis.sellPrice)}</span>
                     </div>
                     <div class="price-row">
@@ -378,9 +479,10 @@ function updateArmorCards() {
                 </div>
                 
                 <div class="auction-info">
-                    <strong>Info Auction House:</strong><br>
-                    • Volume: ${analysis.volume} ventes récentes<br>
+                    <strong>Info Auction House (${dataStatus}):</strong><br>
+                    • Volume: ${analysis.volume} BIN disponibles<br>
                     • Prix min: ${formatCoins(analysis.lowestBin)}<br>
+                    • Prix moyen: ${formatCoins(analysis.averagePrice)}<br>
                     • Prix max: ${formatCoins(analysis.highestBin)}
                 </div>
             </div>
@@ -439,10 +541,11 @@ function saveProfitSnapshot() {
             profit: craft.analysis?.rawProfit || 0,
             profitPercent: craft.analysis?.profitPercent || 0,
             craftCost: craft.analysis?.craftCost || 0,
-            sellPrice: craft.analysis?.sellPrice || 0
+            sellPrice: craft.analysis?.sellPrice || 0,
+            isRealData: craft.analysis?.isRealData || false
         })),
         materials: {
-            hardstone: materialPrices.HARDSTONE?.buyPrice || 0,
+            enchantedHardstone: materialPrices.ENCHANTED_HARDSTONE?.buyPrice || 0,
             yoggie: materialPrices.YOGGIE?.buyPrice || 0
         }
     };
@@ -502,7 +605,7 @@ function updateHistoricalData() {
             </div>
             <div class="historical-details">
                 ${snapshot.pieces.map(piece => `
-                    <div>${piece.name}: ${formatCoins(piece.profit)} (${piece.profitPercent >= 0 ? '+' : ''}${piece.profitPercent.toFixed(1)}%)</div>
+                    <div>${piece.name}: ${formatCoins(piece.profit)} (${piece.profitPercent >= 0 ? '+' : ''}${piece.profitPercent.toFixed(1)}%) ${piece.isRealData ? '🟢' : '🟡'}</div>
                 `).join('')}
             </div>
         </div>
@@ -554,7 +657,7 @@ function formatNumber(num) {
 
 function formatMaterialName(material) {
     const names = {
-        'HARDSTONE': 'Hardstone',
+        'ENCHANTED_HARDSTONE': 'Enchanted Hardstone',
         'YOGGIE': 'Yoggie'
     };
     return names[material] || material;
