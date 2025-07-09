@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hypixel Skyblock - Yog Armor Profit Calculator</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/yog-armor.css">
+</head>
+<body>
+    <div class="header">
+        <h1>⚔️ Yog Armor Profit Calculator</h1>
+        <p>Calculez vos profits en craftant et vendant l'armure Yog</p>
+    </div>
+
+    <nav class="navigation">
+        <div class="nav-container">
+            <a href="../index.html" class="nav-link">🏆 MMM Guide</a>
+            <a href="bazaar.html" class="nav-link">📊 Bazaar Flips</a>
+            <a href="calculator.html" class="nav-link">🧮 Calculatrice</a>
+            <a href="yog-armor.html" class="nav-link active">⚔️ Yog Armor</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="stats-bar">
+            <div class="stat-card">
+                <div class="stat-value" id="totalProfit">-</div>
+                <div class="stat-label">Profit total set complet</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="bestPiece">-</div>
+                <div class="stat-label">Meilleure pièce</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="materialCosts">-</div>
+                <div class="stat-label">Coût matériaux</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="lastUpdate">-</div>
+                <div class="stat-label">Dernière MAJ</div>
+            </div>
+        </div>
+
+        <div class="materials-section">
+            <h2>💎 Prix des Matériaux (Bazaar)</h2>
+            <div class="materials-grid">
+                <div class="material-card">
+                    <div class="material-icon">🪨</div>
+                    <div class="material-info">
+                        <div class="material-name">Hardstone</div>
+                        <div class="material-price" id="hardstonePrice">-</div>
+                        <div class="material-stock" id="hardstoneStock">-</div>
+                    </div>
+                </div>
+                <div class="material-card">
+                    <div class="material-icon">👹</div>
+                    <div class="material-info">
+                        <div class="material-name">Yoggie</div>
+                        <div class="material-price" id="yoggiePrice">-</div>
+                        <div class="material-stock" id="yoggieStock">-</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="armor-section">
+            <h2>⚔️ Analyse des Profits par Pièce</h2>
+            <div class="refresh-controls">
+                <button class="refresh-btn" onclick="refreshAllData()">🔄 Actualiser toutes les données</button>
+                <div class="loading-indicator" id="loadingIndicator">
+                    <span class="spinner">⟳</span> Chargement...
+                </div>
+            </div>
+            <div class="armor-grid" id="armorGrid">
+                <div class="loading">Chargement des données...</div>
+            </div>
+        </div>
+
+        <div class="historical-section">
+            <h2>📈 Historique des Profits</h2>
+            <div class="historical-controls">
+                <button class="clear-history-btn" onclick="clearProfitHistory()">🗑️ Vider l'historique</button>
+            </div>
+            <div class="historical-grid" id="historicalData">
+                <div class="no-data">Aucun historique pour le moment...</div>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h2>ℹ️ Informations sur les Crafts</h2>
+            <div class="info-grid">
+                <div class="craft-recipe">
+                    <h3>🔨 Recettes de Craft</h3>
+                    <div class="recipe-list">
+                        <div class="recipe-item">
+                            <strong>Yog Helmet:</strong> 100 Hardstone + 40 Yoggies
+                        </div>
+                        <div class="recipe-item">
+                            <strong>Yog Chestplate:</strong> 160 Hardstone + 40 Yoggies
+                        </div>
+                        <div class="recipe-item">
+                            <strong>Yog Leggings:</strong> 140 Hardstone + 40 Yoggies
+                        </div>
+                        <div class="recipe-item">
+                            <strong>Yog Boots:</strong> 80 Hardstone + 40 Yoggies
+                        </div>
+                    </div>
+                </div>
+                <div class="tips-info">
+                    <h3>💡 Conseils de Trading</h3>
+                    <ul>
+                        <li>Vérifiez toujours les volumes bazaar avant d'acheter</li>
+                        <li>Les prix auction house fluctuent selon l'offre/demande</li>
+                        <li>Considérez les frais d'auction house (1-5%)</li>
+                        <li>Surveillez les events qui peuvent affecter les prix</li>
+                        <li>Le profit peut varier selon les reforges appliqués</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/yog-armor.js"></script>
+</body>
+</html>
