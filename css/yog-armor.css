@@ -266,82 +266,6 @@
     font-size: 0.9em;
 }
 
-/* Section historique */
-.historical-section {
-    background: rgba(255, 255, 255, 0.95);
-    padding: 25px;
-    border-radius: 15px;
-    margin-bottom: 20px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-}
-
-.historical-section h2 {
-    color: #333;
-    margin-bottom: 20px;
-    font-size: 1.5em;
-    border-bottom: 2px solid #667eea;
-    padding-bottom: 10px;
-}
-
-.historical-controls {
-    text-align: right;
-    margin-bottom: 15px;
-}
-
-.clear-history-btn {
-    background: #dc3545;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-size: 0.9em;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.clear-history-btn:hover {
-    background: #c82333;
-    transform: translateY(-1px);
-}
-
-.historical-grid {
-    display: grid;
-    gap: 15px;
-}
-
-.historical-item {
-    background: #f8f9fa;
-    padding: 15px;
-    border-radius: 10px;
-    border-left: 4px solid #667eea;
-    transition: all 0.3s ease;
-}
-
-.historical-item:hover {
-    transform: translateX(3px);
-    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-}
-
-.historical-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-}
-
-.historical-timestamp {
-    font-size: 0.8em;
-    color: #666;
-}
-
-.historical-details {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 10px;
-    font-size: 0.9em;
-    color: #555;
-}
-
 /* Section informations */
 .info-section {
     background: rgba(255, 255, 255, 0.95);
@@ -449,16 +373,6 @@
     .refresh-controls {
         flex-direction: column;
         gap: 10px;
-    }
-
-    .historical-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 5px;
-    }
-
-    .historical-details {
-        grid-template-columns: 1fr;
     }
 
     .price-breakdown, .cost-breakdown, .auction-info {

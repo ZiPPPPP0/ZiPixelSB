@@ -48,13 +48,11 @@ const yogArmorCrafts = [
 // Variables globales
 let materialPrices = {};
 let armorPrices = {};
-let profitHistory = [];
 
 // Initialisation
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Initialisation Yog Armor Calculator...');
     
-    loadProfitHistory();
     refreshAllData();
     
     // Auto-actualisation toutes les 5 minutes
@@ -81,9 +79,6 @@ async function refreshAllData() {
         
         console.log('Mise à jour de l\'affichage...');
         updateDisplay();
-        
-        console.log('Sauvegarde dans l\'historique...');
-        saveProfitSnapshot();
         
     } catch (error) {
         console.error('Erreur lors du chargement des données:', error);
@@ -375,7 +370,6 @@ function updateDisplay() {
     updateMaterialPrices();
     updateArmorCards();
     updateStats();
-    updateHistoricalData();
 }
 
 // Mise à jour des prix des matériaux
@@ -528,103 +522,6 @@ function updateStats() {
     const lastUpdateElement = document.getElementById('lastUpdate');
     if (lastUpdateElement) {
         lastUpdateElement.textContent = new Date().toLocaleTimeString('fr-FR');
-    }
-}
-
-// Sauvegarde d'un snapshot dans l'historique
-function saveProfitSnapshot() {
-    const snapshot = {
-        timestamp: new Date(),
-        totalProfit: yogArmorCrafts.reduce((sum, craft) => sum + (craft.analysis?.rawProfit || 0), 0),
-        pieces: yogArmorCrafts.map(craft => ({
-            name: craft.name,
-            profit: craft.analysis?.rawProfit || 0,
-            profitPercent: craft.analysis?.profitPercent || 0,
-            craftCost: craft.analysis?.craftCost || 0,
-            sellPrice: craft.analysis?.sellPrice || 0,
-            isRealData: craft.analysis?.isRealData || false
-        })),
-        materials: {
-            enchantedHardstone: materialPrices.ENCHANTED_HARDSTONE?.buyPrice || 0,
-            yoggie: materialPrices.YOGGIE?.buyPrice || 0
-        }
-    };
-    
-    profitHistory.unshift(snapshot);
-    
-    // Garder seulement les 20 derniers
-    if (profitHistory.length > 20) {
-        profitHistory = profitHistory.slice(0, 20);
-    }
-    
-    // Sauvegarder dans localStorage
-    try {
-        const historyToSave = profitHistory.map(item => ({
-            ...item,
-            timestamp: item.timestamp.toISOString()
-        }));
-        localStorage.setItem('yogArmorHistory', JSON.stringify(historyToSave));
-    } catch (error) {
-        console.warn('Impossible de sauvegarder l\'historique:', error);
-    }
-}
-
-// Chargement de l'historique
-function loadProfitHistory() {
-    try {
-        const saved = localStorage.getItem('yogArmorHistory');
-        if (saved) {
-            const parsedHistory = JSON.parse(saved);
-            profitHistory = parsedHistory.map(item => ({
-                ...item,
-                timestamp: new Date(item.timestamp)
-            }));
-        }
-    } catch (error) {
-        console.warn('Impossible de charger l\'historique:', error);
-        profitHistory = [];
-    }
-}
-
-// Mise à jour de l'historique affiché
-function updateHistoricalData() {
-    const container = document.getElementById('historicalData');
-    
-    if (!container) return;
-    
-    if (profitHistory.length === 0) {
-        container.innerHTML = '<div class="no-data">Aucun historique pour le moment...</div>';
-        return;
-    }
-    
-    const html = profitHistory.slice(0, 10).map(snapshot => `
-        <div class="historical-item">
-            <div class="historical-header">
-                <strong>Snapshot du ${snapshot.timestamp.toLocaleString('fr-FR')}</strong>
-                <span class="historical-timestamp">Profit total: ${formatCoins(snapshot.totalProfit)}</span>
-            </div>
-            <div class="historical-details">
-                ${snapshot.pieces.map(piece => `
-                    <div>${piece.name}: ${formatCoins(piece.profit)} (${piece.profitPercent >= 0 ? '+' : ''}${piece.profitPercent.toFixed(1)}%) ${piece.isRealData ? '🟢' : '🟡'}</div>
-                `).join('')}
-            </div>
-        </div>
-    `).join('');
-    
-    container.innerHTML = html;
-}
-
-// Vider l'historique
-function clearProfitHistory() {
-    if (confirm('❓ Êtes-vous sûr de vouloir vider l\'historique des profits ?')) {
-        profitHistory = [];
-        try {
-            localStorage.removeItem('yogArmorHistory');
-        } catch (error) {
-            console.warn('Impossible de vider l\'historique:', error);
-        }
-        updateHistoricalData();
-        console.log('Historique des profits vidé');
     }
 }
 
