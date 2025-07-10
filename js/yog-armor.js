@@ -48,13 +48,11 @@ const yogArmorCrafts = [
 // Variables globales
 let materialPrices = {};
 let armorPrices = {};
-let profitHistory = [];
 
 // Initialisation
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Initialisation Yog Armor Calculator...');
     
-    loadProfitHistory();
     refreshAllData();
     
     // Auto-actualisation toutes les 5 minutes
@@ -81,9 +79,6 @@ async function refreshAllData() {
         
         console.log('Mise à jour de l\'affichage...');
         updateDisplay();
-        
-        console.log('Sauvegarde dans l\'historique...');
-        saveProfitSnapshot();
         
     } catch (error) {
         console.error('Erreur lors du chargement des données:', error);
@@ -326,13 +321,13 @@ function calculateEstimatedCraftCost(craft) {
     return cost;
 }
 
-// Fonction pour évaluer le volume de vente
-function getVolumeStatus(volume) {
-    if (volume >= 20) return { status: 'Excellent', color: '#28a745', icon: '🟢' };
-    if (volume >= 10) return { status: 'Bon', color: '#ffc107', icon: '🟡' };
+// Fonction pour évaluer les ventes par jour
+function getSalesStatus(volume) {
+    if (volume >= 20) return { status: 'Très élevé', color: '#28a745', icon: '🟢' };
+    if (volume >= 10) return { status: 'Élevé', color: '#ffc107', icon: '🟡' };
     if (volume >= 5) return { status: 'Moyen', color: '#fd7e14', icon: '🟠' };
     if (volume >= 1) return { status: 'Faible', color: '#dc3545', icon: '🔴' };
-    return { status: 'Aucun', color: '#6c757d', icon: '⚫' };
+    return { status: 'Aucune', color: '#6c757d', icon: '⚫' };
 }
 
 // Calcul des profits pour chaque pièce
@@ -369,14 +364,14 @@ function calculateProfits() {
             rawProfit: netSellPrice - craftCost,
             profitPercent: ((netSellPrice - craftCost) / craftCost) * 100,
             volume: armorPrice.volume,
-            volumeStatus: getVolumeStatus(armorPrice.volume),
+            salesStatus: getSalesStatus(armorPrice.volume),
             lowestBin: armorPrice.lowestBin,
             averagePrice: armorPrice.averagePrice,
             highestBin: armorPrice.highestBin,
             isRealData: !armorPrice.isEstimated
         };
         
-        console.log(`${craft.name}: ${formatCoins(craft.analysis.rawProfit)} profit (${craft.analysis.profitPercent.toFixed(1)}%) - Volume: ${craft.analysis.volume}`);
+        console.log(`${craft.name}: ${formatCoins(craft.analysis.rawProfit)} profit (${craft.analysis.profitPercent.toFixed(1)}%) - Ventes/jour: ${craft.analysis.volume}`);
     });
 }
 
@@ -385,7 +380,6 @@ function updateDisplay() {
     updateMaterialPrices();
     updateArmorCards();
     updateStats();
-    updateHistoricalData();
 }
 
 // Mise à jour des prix des matériaux
@@ -443,7 +437,7 @@ function updateArmorCards() {
         else profitClass += ' profit-negative';
         
         const dataStatus = analysis.isRealData ? '🟢 Prix réels' : '🟡 Prix estimés';
-        const volumeStatus = analysis.volumeStatus;
+        const salesStatus = analysis.salesStatus;
         
         return `
             <div class="${cardClass}">
@@ -457,12 +451,12 @@ function updateArmorCards() {
                     <div class="profit-percentage">${analysis.profitPercent >= 0 ? '+' : ''}${analysis.profitPercent.toFixed(1)}% profit</div>
                 </div>
                 
-                <div class="volume-display" style="background: ${volumeStatus.color}15; border: 1px solid ${volumeStatus.color}40; padding: 10px; border-radius: 8px; margin: 10px 0; text-align: center;">
-                    <div style="font-weight: bold; color: ${volumeStatus.color};">
-                        ${volumeStatus.icon} Volume Auction: ${analysis.volume} BIN
+                <div class="volume-display" style="background: ${salesStatus.color}15; border: 1px solid ${salesStatus.color}40; padding: 10px; border-radius: 8px; margin: 10px 0; text-align: center;">
+                    <div style="font-weight: bold; color: ${salesStatus.color};">
+                        ${salesStatus.icon} Ventes par jour: ${analysis.volume}
                     </div>
-                    <div style="font-size: 0.9em; color: ${volumeStatus.color};">
-                        Liquidité: ${volumeStatus.status}
+                    <div style="font-size: 0.9em; color: ${salesStatus.color};">
+                        Demande: ${salesStatus.status}
                     </div>
                 </div>
                 
@@ -500,7 +494,7 @@ function updateArmorCards() {
                 
                 <div class="auction-info">
                     <strong>Détails Auction House (${dataStatus}):</strong><br>
-                    • Volume total: ${analysis.volume} BIN disponibles<br>
+                    • Ventes par jour: ${analysis.volume}<br>
                     • Prix min: ${formatCoins(analysis.lowestBin)}<br>
                     • Prix médian: ${formatCoins(analysis.averagePrice)}<br>
                     • Prix max: ${formatCoins(analysis.highestBin)}
@@ -523,145 +517,10 @@ function updateStats() {
         totalProfitElement.textContent = formatCoins(totalProfit);
     }
     
-    // Meilleure pièce
-    const bestPieceElement = document.getElementById('bestPiece');
-    if (bestPieceElement) {
-        const bestCraft = yogArmorCrafts.reduce((best, craft) => {
-            if (!craft.analysis) return best;
-            if (!best.analysis) return craft;
-            return craft.analysis.rawProfit > best.analysis.rawProfit ? craft : best;
-        }, {});
-        
-        bestPieceElement.textContent = bestCraft.name || '-';
-    }
-    
-    // Coût total des matériaux
-    const materialCostsElement = document.getElementById('materialCosts');
-    if (materialCostsElement) {
-        const totalCost = yogArmorCrafts.reduce((sum, craft) => {
-            return sum + (craft.analysis ? craft.analysis.craftCost : 0);
-        }, 0);
-        materialCostsElement.textContent = formatCoins(totalCost);
-    }
-    
-    // Volume total des auctions (nouveau)
-    const totalVolumeElement = document.getElementById('totalVolume');
-    if (totalVolumeElement) {
-        const totalVolume = yogArmorCrafts.reduce((sum, craft) => {
-            return sum + (craft.analysis ? craft.analysis.volume : 0);
-        }, 0);
-        totalVolumeElement.textContent = totalVolume;
-    }
-    
     // Dernière mise à jour
     const lastUpdateElement = document.getElementById('lastUpdate');
     if (lastUpdateElement) {
         lastUpdateElement.textContent = new Date().toLocaleTimeString('fr-FR');
-    }
-}
-
-// Sauvegarde d'un snapshot dans l'historique
-function saveProfitSnapshot() {
-    const snapshot = {
-        timestamp: new Date(),
-        totalProfit: yogArmorCrafts.reduce((sum, craft) => sum + (craft.analysis?.rawProfit || 0), 0),
-        totalVolume: yogArmorCrafts.reduce((sum, craft) => sum + (craft.analysis?.volume || 0), 0),
-        pieces: yogArmorCrafts.map(craft => ({
-            name: craft.name,
-            profit: craft.analysis?.rawProfit || 0,
-            profitPercent: craft.analysis?.profitPercent || 0,
-            craftCost: craft.analysis?.craftCost || 0,
-            sellPrice: craft.analysis?.sellPrice || 0,
-            volume: craft.analysis?.volume || 0,
-            volumeStatus: craft.analysis?.volumeStatus?.status || 'Aucun',
-            isRealData: craft.analysis?.isRealData || false
-        })),
-        materials: {
-            enchantedHardStone: materialPrices.ENCHANTED_HARD_STONE?.sellPrice || 0,
-            yoggie: materialPrices.YOGGIE?.sellPrice || 0
-        }
-    };
-    
-    profitHistory.unshift(snapshot);
-    
-    // Garder seulement les 20 derniers
-    if (profitHistory.length > 20) {
-        profitHistory = profitHistory.slice(0, 20);
-    }
-    
-    // Sauvegarder dans localStorage
-    try {
-        const historyToSave = profitHistory.map(item => ({
-            ...item,
-            timestamp: item.timestamp.toISOString()
-        }));
-        localStorage.setItem('yogArmorHistory', JSON.stringify(historyToSave));
-    } catch (error) {
-        console.warn('Impossible de sauvegarder l\'historique:', error);
-    }
-}
-
-// Chargement de l'historique
-function loadProfitHistory() {
-    try {
-        const saved = localStorage.getItem('yogArmorHistory');
-        if (saved) {
-            const parsedHistory = JSON.parse(saved);
-            profitHistory = parsedHistory.map(item => ({
-                ...item,
-                timestamp: new Date(item.timestamp)
-            }));
-        }
-    } catch (error) {
-        console.warn('Impossible de charger l\'historique:', error);
-        profitHistory = [];
-    }
-}
-
-// Mise à jour de l'historique affiché
-function updateHistoricalData() {
-    const container = document.getElementById('historicalData');
-    
-    if (!container) return;
-    
-    if (profitHistory.length === 0) {
-        container.innerHTML = '<div class="no-data">Aucun historique pour le moment...</div>';
-        return;
-    }
-    
-    const html = profitHistory.slice(0, 10).map(snapshot => `
-        <div class="historical-item">
-            <div class="historical-header">
-                <strong>Snapshot du ${snapshot.timestamp.toLocaleString('fr-FR')}</strong>
-                <span class="historical-timestamp">
-                    Profit: ${formatCoins(snapshot.totalProfit)} | Volume: ${snapshot.totalVolume || 0} BIN
-                </span>
-            </div>
-            <div class="historical-details">
-                ${snapshot.pieces.map(piece => `
-                    <div>
-                        ${piece.name}: ${formatCoins(piece.profit)} (${piece.profitPercent >= 0 ? '+' : ''}${piece.profitPercent.toFixed(1)}%) 
-                        - Vol: ${piece.volume || 0} ${piece.isRealData ? '🟢' : '🟡'}
-                    </div>
-                `).join('')}
-            </div>
-        </div>
-    `).join('');
-    
-    container.innerHTML = html;
-}
-
-// Vider l'historique
-function clearProfitHistory() {
-    if (confirm('❓ Êtes-vous sûr de vouloir vider l\'historique des profits ?')) {
-        profitHistory = [];
-        try {
-            localStorage.removeItem('yogArmorHistory');
-        } catch (error) {
-            console.warn('Impossible de vider l\'historique:', error);
-        }
-        updateHistoricalData();
-        console.log('Historique des profits vidé');
     }
 }
 

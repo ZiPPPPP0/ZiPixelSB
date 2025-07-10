@@ -29,18 +29,6 @@
                 <div class="stat-label">Profit total set complet</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value" id="bestPiece">-</div>
-                <div class="stat-label">Meilleure pièce</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="totalVolume">-</div>
-                <div class="stat-label">Volume total auction</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="materialCosts">-</div>
-                <div class="stat-label">Coût d'opportunité</div>
-            </div>
-            <div class="stat-card">
                 <div class="stat-value" id="lastUpdate">-</div>
                 <div class="stat-label">Dernière MAJ</div>
             </div>
@@ -76,56 +64,20 @@
                     <span class="spinner">⟳</span> Chargement...
                 </div>
             </div>
+            
+            <div class="info-panel" style="background: rgba(255, 255, 255, 0.95); padding: 15px; border-radius: 10px; margin-bottom: 20px; border-left: 4px solid #667eea;">
+                <h4 style="margin: 0 0 10px 0; color: #333;">📊 Comprendre les ventes par jour :</h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; font-size: 0.9em;">
+                    <div><strong>🟢 Très élevé (20+):</strong> Demande forte</div>
+                    <div><strong>🟡 Élevé (10-19):</strong> Demande correcte</div>
+                    <div><strong>🟠 Moyen (5-9):</strong> Demande modérée</div>
+                    <div><strong>🔴 Faible (1-4):</strong> Demande faible</div>
+                    <div><strong>⚫ Aucune (0):</strong> Pas de marché</div>
+                </div>
+            </div>
+            
             <div class="armor-grid" id="armorGrid">
                 <div class="loading">Chargement des données...</div>
-            </div>
-        </div>
-
-        <div class="historical-section">
-            <h2>📈 Historique des Profits</h2>
-            <div class="historical-controls">
-                <button class="clear-history-btn" onclick="clearProfitHistory()">🗑️ Vider l'historique</button>
-            </div>
-            <div class="historical-grid" id="historicalData">
-                <div class="no-data">Aucun historique pour le moment...</div>
-            </div>
-        </div>
-
-        <div class="info-section">
-            <h2>ℹ️ Informations sur les Crafts</h2>
-            <div class="info-grid">
-                <div class="craft-recipe">
-                    <h3>🔨 Recettes de Craft</h3>
-                    <div class="recipe-list">
-                        <div class="recipe-item">
-                            <strong>Yog Helmet:</strong> 100 Enchanted Hard Stone + 40 Yoggies
-                        </div>
-                        <div class="recipe-item">
-                            <strong>Yog Chestplate:</strong> 160 Enchanted Hard Stone + 40 Yoggies
-                        </div>
-                        <div class="recipe-item">
-                            <strong>Yog Leggings:</strong> 140 Enchanted Hard Stone + 40 Yoggies
-                        </div>
-                        <div class="recipe-item">
-                            <strong>Yog Boots:</strong> 80 Enchanted Hard Stone + 40 Yoggies
-                        </div>
-                    </div>
-                </div>
-                <div class="tips-info">
-                    <h3>💡 Conseils de Trading & Volume</h3>
-                    <ul>
-                        <li>Les calculs utilisent les prix de vente (si vous farmez vos matériaux)</li>
-                        <li>Vérifiez les volumes bazaar avant de vendre vos matériaux</li>
-                        <li><strong>Volume Auction:</strong> Plus le volume est élevé, plus la vente est facile</li>
-                        <li><strong>🟢 Excellent (20+ BIN):</strong> Vente quasi-garantie rapidement</li>
-                        <li><strong>🟡 Bon (10-19 BIN):</strong> Vente probable dans les heures qui suivent</li>
-                        <li><strong>🟠 Moyen (5-9 BIN):</strong> Vente possible mais plus lente</li>
-                        <li><strong>🔴 Faible (1-4 BIN):</strong> Risque de vente difficile</li>
-                        <li>Les prix auction house fluctuent selon l'offre/demande</li>
-                        <li>Considérez les frais d'auction house (1-5%)</li>
-                        <li>Surveillez les events qui peuvent affecter les prix</li>
-                    </ul>
-                </div>
             </div>
         </div>
     </div>
