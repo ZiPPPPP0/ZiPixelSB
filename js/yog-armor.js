@@ -326,6 +326,15 @@ function calculateEstimatedCraftCost(craft) {
     return cost;
 }
 
+// Fonction pour évaluer le volume de vente
+function getVolumeStatus(volume) {
+    if (volume >= 20) return { status: 'Excellent', color: '#28a745', icon: '🟢' };
+    if (volume >= 10) return { status: 'Bon', color: '#ffc107', icon: '🟡' };
+    if (volume >= 5) return { status: 'Moyen', color: '#fd7e14', icon: '🟠' };
+    if (volume >= 1) return { status: 'Faible', color: '#dc3545', icon: '🔴' };
+    return { status: 'Aucun', color: '#6c757d', icon: '⚫' };
+}
+
 // Calcul des profits pour chaque pièce
 function calculateProfits() {
     yogArmorCrafts.forEach(craft => {
@@ -360,13 +369,14 @@ function calculateProfits() {
             rawProfit: netSellPrice - craftCost,
             profitPercent: ((netSellPrice - craftCost) / craftCost) * 100,
             volume: armorPrice.volume,
+            volumeStatus: getVolumeStatus(armorPrice.volume),
             lowestBin: armorPrice.lowestBin,
             averagePrice: armorPrice.averagePrice,
             highestBin: armorPrice.highestBin,
             isRealData: !armorPrice.isEstimated
         };
         
-        console.log(`${craft.name}: ${formatCoins(craft.analysis.rawProfit)} profit (${craft.analysis.profitPercent.toFixed(1)}%)`);
+        console.log(`${craft.name}: ${formatCoins(craft.analysis.rawProfit)} profit (${craft.analysis.profitPercent.toFixed(1)}%) - Volume: ${craft.analysis.volume}`);
     });
 }
 
@@ -433,6 +443,7 @@ function updateArmorCards() {
         else profitClass += ' profit-negative';
         
         const dataStatus = analysis.isRealData ? '🟢 Prix réels' : '🟡 Prix estimés';
+        const volumeStatus = analysis.volumeStatus;
         
         return `
             <div class="${cardClass}">
@@ -444,6 +455,15 @@ function updateArmorCards() {
                 <div class="${profitClass}">
                     <div class="profit-amount">${formatCoins(analysis.rawProfit)}</div>
                     <div class="profit-percentage">${analysis.profitPercent >= 0 ? '+' : ''}${analysis.profitPercent.toFixed(1)}% profit</div>
+                </div>
+                
+                <div class="volume-display" style="background: ${volumeStatus.color}15; border: 1px solid ${volumeStatus.color}40; padding: 10px; border-radius: 8px; margin: 10px 0; text-align: center;">
+                    <div style="font-weight: bold; color: ${volumeStatus.color};">
+                        ${volumeStatus.icon} Volume Auction: ${analysis.volume} BIN
+                    </div>
+                    <div style="font-size: 0.9em; color: ${volumeStatus.color};">
+                        Liquidité: ${volumeStatus.status}
+                    </div>
                 </div>
                 
                 <div class="price-breakdown">
@@ -479,10 +499,10 @@ function updateArmorCards() {
                 </div>
                 
                 <div class="auction-info">
-                    <strong>Info Auction House (${dataStatus}):</strong><br>
-                    • Volume: ${analysis.volume} BIN disponibles<br>
+                    <strong>Détails Auction House (${dataStatus}):</strong><br>
+                    • Volume total: ${analysis.volume} BIN disponibles<br>
                     • Prix min: ${formatCoins(analysis.lowestBin)}<br>
-                    • Prix moyen: ${formatCoins(analysis.averagePrice)}<br>
+                    • Prix médian: ${formatCoins(analysis.averagePrice)}<br>
                     • Prix max: ${formatCoins(analysis.highestBin)}
                 </div>
             </div>
@@ -524,6 +544,15 @@ function updateStats() {
         materialCostsElement.textContent = formatCoins(totalCost);
     }
     
+    // Volume total des auctions (nouveau)
+    const totalVolumeElement = document.getElementById('totalVolume');
+    if (totalVolumeElement) {
+        const totalVolume = yogArmorCrafts.reduce((sum, craft) => {
+            return sum + (craft.analysis ? craft.analysis.volume : 0);
+        }, 0);
+        totalVolumeElement.textContent = totalVolume;
+    }
+    
     // Dernière mise à jour
     const lastUpdateElement = document.getElementById('lastUpdate');
     if (lastUpdateElement) {
@@ -536,12 +565,15 @@ function saveProfitSnapshot() {
     const snapshot = {
         timestamp: new Date(),
         totalProfit: yogArmorCrafts.reduce((sum, craft) => sum + (craft.analysis?.rawProfit || 0), 0),
+        totalVolume: yogArmorCrafts.reduce((sum, craft) => sum + (craft.analysis?.volume || 0), 0),
         pieces: yogArmorCrafts.map(craft => ({
             name: craft.name,
             profit: craft.analysis?.rawProfit || 0,
             profitPercent: craft.analysis?.profitPercent || 0,
             craftCost: craft.analysis?.craftCost || 0,
             sellPrice: craft.analysis?.sellPrice || 0,
+            volume: craft.analysis?.volume || 0,
+            volumeStatus: craft.analysis?.volumeStatus?.status || 'Aucun',
             isRealData: craft.analysis?.isRealData || false
         })),
         materials: {
@@ -601,11 +633,16 @@ function updateHistoricalData() {
         <div class="historical-item">
             <div class="historical-header">
                 <strong>Snapshot du ${snapshot.timestamp.toLocaleString('fr-FR')}</strong>
-                <span class="historical-timestamp">Profit total: ${formatCoins(snapshot.totalProfit)}</span>
+                <span class="historical-timestamp">
+                    Profit: ${formatCoins(snapshot.totalProfit)} | Volume: ${snapshot.totalVolume || 0} BIN
+                </span>
             </div>
             <div class="historical-details">
                 ${snapshot.pieces.map(piece => `
-                    <div>${piece.name}: ${formatCoins(piece.profit)} (${piece.profitPercent >= 0 ? '+' : ''}${piece.profitPercent.toFixed(1)}%) ${piece.isRealData ? '🟢' : '🟡'}</div>
+                    <div>
+                        ${piece.name}: ${formatCoins(piece.profit)} (${piece.profitPercent >= 0 ? '+' : ''}${piece.profitPercent.toFixed(1)}%) 
+                        - Vol: ${piece.volume || 0} ${piece.isRealData ? '🟢' : '🟡'}
+                    </div>
                 `).join('')}
             </div>
         </div>
