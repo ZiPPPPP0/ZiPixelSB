@@ -8,7 +8,7 @@ const yogArmorCrafts = [
         name: 'Yog Helmet',
         icon: '⛑️',
         materials: {
-            ENCHANTED_HARD_STONE: 100,
+            ENCHANTED_HARDSTONE: 100,
             YOGGIE: 40
         },
         auctionSearchTerms: ['yog helmet', 'yog_helmet', 'YOG_HELMET']
@@ -18,7 +18,7 @@ const yogArmorCrafts = [
         name: 'Yog Chestplate',
         icon: '🛡️',
         materials: {
-            ENCHANTED_HARD_STONE: 160,
+            ENCHANTED_HARDSTONE: 160,
             YOGGIE: 40
         },
         auctionSearchTerms: ['yog chestplate', 'yog_chestplate', 'YOG_CHESTPLATE']
@@ -28,7 +28,7 @@ const yogArmorCrafts = [
         name: 'Yog Leggings',
         icon: '👖',
         materials: {
-            ENCHANTED_HARD_STONE: 140,
+            ENCHANTED_HARDSTONE: 140,
             YOGGIE: 40
         },
         auctionSearchTerms: ['yog leggings', 'yog_leggings', 'YOG_LEGGINGS']
@@ -38,7 +38,7 @@ const yogArmorCrafts = [
         name: 'Yog Boots',
         icon: '🥾',
         materials: {
-            ENCHANTED_HARD_STONE: 80,
+            ENCHANTED_HARDSTONE: 80,
             YOGGIE: 40
         },
         auctionSearchTerms: ['yog boots', 'yog_boots', 'YOG_BOOTS']
@@ -108,21 +108,16 @@ async function loadMaterialPrices() {
             throw new Error('Réponse API bazaar invalide');
         }
         
-        console.log('Données bazaar reçues, extraction des prix...');
-        
-        // Extraire les prix des matériaux nécessaires (ENCHANTED_HARD_STONE et YOGGIE)
+        // Extraire les prix des matériaux nécessaires (ENCHANTED_HARDSTONE et YOGGIE)
         materialPrices = {};
         
-        if (data.products.ENCHANTED_HARD_STONE && data.products.ENCHANTED_HARD_STONE.quick_status) {
-            materialPrices.ENCHANTED_HARD_STONE = {
-                buyPrice: data.products.ENCHANTED_HARD_STONE.quick_status.buyPrice || 0,
-                sellPrice: data.products.ENCHANTED_HARD_STONE.quick_status.sellPrice || 0,
-                buyVolume: data.products.ENCHANTED_HARD_STONE.quick_status.buyVolume || 0,
-                sellVolume: data.products.ENCHANTED_HARD_STONE.quick_status.sellVolume || 0
+        if (data.products.ENCHANTED_HARDSTONE && data.products.ENCHANTED_HARDSTONE.quick_status) {
+            materialPrices.ENCHANTED_HARDSTONE = {
+                buyPrice: data.products.ENCHANTED_HARDSTONE.quick_status.buyPrice || 0,
+                sellPrice: data.products.ENCHANTED_HARDSTONE.quick_status.sellPrice || 0,
+                buyVolume: data.products.ENCHANTED_HARDSTONE.quick_status.buyVolume || 0,
+                sellVolume: data.products.ENCHANTED_HARDSTONE.quick_status.sellVolume || 0
             };
-            console.log('ENCHANTED_HARD_STONE trouvé:', materialPrices.ENCHANTED_HARD_STONE);
-        } else {
-            console.log('ENCHANTED_HARD_STONE non trouvé dans les données bazaar');
         }
         
         if (data.products.YOGGIE && data.products.YOGGIE.quick_status) {
@@ -132,15 +127,11 @@ async function loadMaterialPrices() {
                 buyVolume: data.products.YOGGIE.quick_status.buyVolume || 0,
                 sellVolume: data.products.YOGGIE.quick_status.sellVolume || 0
             };
-            console.log('YOGGIE trouvé:', materialPrices.YOGGIE);
-        } else {
-            console.log('YOGGIE non trouvé dans les données bazaar');
         }
         
         // Prix de fallback si pas de données API
-        if (!materialPrices.ENCHANTED_HARD_STONE) {
-            console.log('Utilisation des prix de fallback pour ENCHANTED_HARD_STONE');
-            materialPrices.ENCHANTED_HARD_STONE = {
+        if (!materialPrices.ENCHANTED_HARDSTONE) {
+            materialPrices.ENCHANTED_HARDSTONE = {
                 buyPrice: 480,
                 sellPrice: 500,
                 buyVolume: 50000,
@@ -149,7 +140,6 @@ async function loadMaterialPrices() {
         }
         
         if (!materialPrices.YOGGIE) {
-            console.log('Utilisation des prix de fallback pour YOGGIE');
             materialPrices.YOGGIE = {
                 buyPrice: 15000,
                 sellPrice: 16000,
@@ -158,14 +148,14 @@ async function loadMaterialPrices() {
             };
         }
         
-        console.log('Prix matériaux finaux:', materialPrices);
+        console.log('Prix matériaux chargés:', materialPrices);
         
     } catch (error) {
         console.error('Erreur lors du chargement des prix bazaar:', error);
         
         // Prix de fallback en cas d'erreur
         materialPrices = {
-            ENCHANTED_HARD_STONE: {
+            ENCHANTED_HARDSTONE: {
                 buyPrice: 480,
                 sellPrice: 500,
                 buyVolume: 50000,
@@ -324,13 +314,13 @@ async function loadAuctionPrices() {
     }
 }
 
-// Calcul du coût de craft estimé
+// Calcul du coût de craft estimé (coût d'opportunité)
 function calculateEstimatedCraftCost(craft) {
     let cost = 0;
     Object.entries(craft.materials).forEach(([material, quantity]) => {
         const materialPrice = materialPrices[material];
         if (materialPrice) {
-            cost += quantity * materialPrice.buyPrice;
+            cost += quantity * materialPrice.sellPrice;
         }
     });
     return cost;
@@ -346,12 +336,12 @@ function calculateProfits() {
             return;
         }
         
-        // Calcul du coût de craft
+        // Calcul du coût de craft (utilise sellPrice car on vend nos matériaux farmés)
         let craftCost = 0;
         Object.entries(craft.materials).forEach(([material, quantity]) => {
             const materialPrice = materialPrices[material];
             if (materialPrice) {
-                craftCost += quantity * materialPrice.buyPrice;
+                craftCost += quantity * materialPrice.sellPrice;
             }
         });
         
@@ -390,13 +380,13 @@ function updateDisplay() {
 
 // Mise à jour des prix des matériaux
 function updateMaterialPrices() {
-    // Enchanted Hard Stone
+    // Enchanted Hardstone
     const hardstonePrice = document.getElementById('hardstonePrice');
     const hardstoneStock = document.getElementById('hardstoneStock');
     
-    if (hardstonePrice && materialPrices.ENCHANTED_HARD_STONE) {
-        hardstonePrice.textContent = formatCoins(materialPrices.ENCHANTED_HARD_STONE.buyPrice);
-        hardstoneStock.textContent = `Stock: ${formatNumber(materialPrices.ENCHANTED_HARD_STONE.buyVolume)}`;
+    if (hardstonePrice && materialPrices.ENCHANTED_HARDSTONE) {
+        hardstonePrice.textContent = formatCoins(materialPrices.ENCHANTED_HARDSTONE.sellPrice);
+        hardstoneStock.textContent = `Stock: ${formatNumber(materialPrices.ENCHANTED_HARDSTONE.sellVolume)}`;
     }
     
     // Yoggie
@@ -404,8 +394,8 @@ function updateMaterialPrices() {
     const yoggieStock = document.getElementById('yoggieStock');
     
     if (yoggiePrice && materialPrices.YOGGIE) {
-        yoggiePrice.textContent = formatCoins(materialPrices.YOGGIE.buyPrice);
-        yoggieStock.textContent = `Stock: ${formatNumber(materialPrices.YOGGIE.buyVolume)}`;
+        yoggiePrice.textContent = formatCoins(materialPrices.YOGGIE.sellPrice);
+        yoggieStock.textContent = `Stock: ${formatNumber(materialPrices.YOGGIE.sellVolume)}`;
     }
 }
 
@@ -480,9 +470,9 @@ function updateArmorCards() {
                 </div>
                 
                 <div class="cost-breakdown">
-                    <strong>Matériaux requis:</strong><br>
+                    <strong>Coût d'opportunité (si vendus au bazaar):</strong><br>
                     ${Object.entries(craft.materials).map(([material, qty]) => {
-                        const price = materialPrices[material] ? materialPrices[material].buyPrice : 0;
+                        const price = materialPrices[material] ? materialPrices[material].sellPrice : 0;
                         const cost = qty * price;
                         return `• ${qty}x ${formatMaterialName(material)} = ${formatCoins(cost)}`;
                     }).join('<br>')}
@@ -555,8 +545,8 @@ function saveProfitSnapshot() {
             isRealData: craft.analysis?.isRealData || false
         })),
         materials: {
-            enchantedHardstone: materialPrices.ENCHANTED_HARD_STONE?.buyPrice || 0,
-            yoggie: materialPrices.YOGGIE?.buyPrice || 0
+            enchantedHardstone: materialPrices.ENCHANTED_HARDSTONE?.sellPrice || 0,
+            yoggie: materialPrices.YOGGIE?.sellPrice || 0
         }
     };
     
@@ -667,7 +657,7 @@ function formatNumber(num) {
 
 function formatMaterialName(material) {
     const names = {
-        'ENCHANTED_HARD_STONE': 'Enchanted Hard Stone',
+        'ENCHANTED_HARDSTONE': 'Enchanted Hardstone',
         'YOGGIE': 'Yoggie'
     };
     return names[material] || material;

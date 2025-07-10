@@ -34,7 +34,7 @@
             </div>
             <div class="stat-card">
                 <div class="stat-value" id="materialCosts">-</div>
-                <div class="stat-label">Coût matériaux</div>
+                <div class="stat-label">Coût d'opportunité</div>
             </div>
             <div class="stat-card">
                 <div class="stat-value" id="lastUpdate">-</div>
@@ -43,7 +43,7 @@
         </div>
 
         <div class="materials-section">
-            <h2>💎 Prix des Matériaux (Bazaar)</h2>
+            <h2>💎 Prix de Vente des Matériaux (Bazaar)</h2>
             <div class="materials-grid">
                 <div class="material-card">
                     <div class="material-icon">🪨</div>
@@ -77,6 +77,16 @@
             </div>
         </div>
 
+        <div class="historical-section">
+            <h2>📈 Historique des Profits</h2>
+            <div class="historical-controls">
+                <button class="clear-history-btn" onclick="clearProfitHistory()">🗑️ Vider l'historique</button>
+            </div>
+            <div class="historical-grid" id="historicalData">
+                <div class="no-data">Aucun historique pour le moment...</div>
+            </div>
+        </div>
+
         <div class="info-section">
             <h2>ℹ️ Informations sur les Crafts</h2>
             <div class="info-grid">
@@ -100,7 +110,8 @@
                 <div class="tips-info">
                     <h3>💡 Conseils de Trading</h3>
                     <ul>
-                        <li>Vérifiez toujours les volumes bazaar avant d'acheter</li>
+                        <li>Les calculs utilisent les prix de vente (si vous farmez vos matériaux)</li>
+                        <li>Vérifiez les volumes bazaar avant de vendre vos matériaux</li>
                         <li>Les prix auction house fluctuent selon l'offre/demande</li>
                         <li>Considérez les frais d'auction house (1-5%)</li>
                         <li>Surveillez les events qui peuvent affecter les prix</li>
